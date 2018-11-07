@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="id.developer.mahendra.pencarianmagangumb.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/background_image"
+        tools:context=".LoginActivity">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="256dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/app_logo" />
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/md_white_1000"
+                android:textColorHint="@color/md_white_1000" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dip"
+            android:background="#e094d2"
+            android:text="login"
+            android:layout_margin="8dp"
+            android:textColor="@android:color/white"/>
+
+        <Button
+            android:id="@+id/register_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@null"
+            android:text="Belum punya akun ? daftar disini"
+            android:textAllCaps="false"
+            android:textColor="@color/md_white_1000"
+            android:textSize="15dp" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:visibility="gone"
+            android:indeterminateTint="#5173bd"
+            android:indeterminateTintMode="src_in"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center|bottom"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

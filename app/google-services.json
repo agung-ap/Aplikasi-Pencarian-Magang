@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "189003858302",
+    "firebase_url": "https://pencarian-magang.firebaseio.com",
+    "project_id": "pencarian-magang",
+    "storage_bucket": "pencarian-magang.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:189003858302:android:f0f57a10ee09dd44",
+        "android_client_info": {
+          "package_name": "id.developer.mahendra.pencarianmagangumb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "189003858302-g2obr5a9cjgm3s1avikf6fhs4qvn2vv3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfnTiN_e_sUUsCNaNILT3vdC8rAecsMzk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

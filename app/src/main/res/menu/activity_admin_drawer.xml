@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/home_admin"
+            android:icon="@drawable/icon_home"
+            android:title="Home" />
+        <item
+            android:id="@+id/profile_admin"
+            android:icon="@drawable/icon_profile"
+            android:title="Profile" />
+        <item
+            android:id="@+id/help_admin"
+            android:icon="@drawable/icon_help"
+            android:title="Help" />
+        <item
+            android:id="@+id/log_out_admin"
+            android:icon="@drawable/icon_log_out"
+            android:title="Logout" />
+    </group>
+
+</menu>
