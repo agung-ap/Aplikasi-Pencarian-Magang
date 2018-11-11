@@ -14,7 +14,7 @@
         tools:context=".EditProfilUser">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/image_preview_admin"
+            android:id="@+id/image_preview_user"
             android:layout_width="match_parent"
             android:layout_height="256dp"
             android:padding="16dp"
@@ -30,8 +30,8 @@
             android:layout_marginBottom="8dp"
             android:src="@drawable/icon_camera"
             app:layout_constraintBottom_toTopOf="@+id/nama"
-            app:layout_constraintEnd_toEndOf="@+id/image_preview_admin"
-            app:layout_constraintStart_toStartOf="@+id/image_preview_admin"
+            app:layout_constraintEnd_toEndOf="@+id/image_preview_user"
+            app:layout_constraintStart_toStartOf="@+id/image_preview_user"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintHorizontal_bias="0.773"
             app:layout_constraintVertical_bias="0.961" />
@@ -43,12 +43,12 @@
             android:text="Nama"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/image_preview_admin"
-            app:layout_constraintLeft_toLeftOf="@+id/image_preview_admin"
-            app:layout_constraintRight_toRightOf="@+id/image_preview_admin"/>
+            app:layout_constraintTop_toBottomOf="@+id/image_preview_user"
+            app:layout_constraintLeft_toLeftOf="@+id/image_preview_user"
+            app:layout_constraintRight_toRightOf="@+id/image_preview_user"/>
 
         <EditText
-            android:id="@+id/nama_admin"
+            android:id="@+id/nama_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -57,18 +57,38 @@
             app:layout_constraintRight_toRightOf="@+id/nama"/>
 
         <TextView
+            android:id="@+id/nim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="NIM"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/nama_user"
+            app:layout_constraintLeft_toLeftOf="@+id/nama_user"
+            app:layout_constraintRight_toRightOf="@+id/nama_user"/>
+
+        <EditText
+            android:id="@+id/nim_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/nim"
+            app:layout_constraintLeft_toLeftOf="@+id/nim"
+            app:layout_constraintRight_toRightOf="@+id/nim"/>
+
+        <TextView
             android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Email"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/nama_admin"
-            app:layout_constraintLeft_toLeftOf="@+id/nama_admin"
-            app:layout_constraintRight_toRightOf="@+id/nama_admin"/>
+            app:layout_constraintTop_toBottomOf="@+id/nim_user"
+            app:layout_constraintLeft_toLeftOf="@+id/nim_user"
+            app:layout_constraintRight_toRightOf="@+id/nim_user"/>
 
         <EditText
-            android:id="@+id/email_admin"
+            android:id="@+id/email_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -83,12 +103,12 @@
             android:text="Password"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/email_admin"
-            app:layout_constraintLeft_toLeftOf="@+id/email_admin"
-            app:layout_constraintRight_toRightOf="@+id/email_admin"/>
+            app:layout_constraintTop_toBottomOf="@+id/email_user"
+            app:layout_constraintLeft_toLeftOf="@+id/email_user"
+            app:layout_constraintRight_toRightOf="@+id/email_user"/>
 
         <EditText
-            android:id="@+id/password_admin"
+            android:id="@+id/password_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -103,12 +123,12 @@
             android:text="No. Telp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/password_admin"
-            app:layout_constraintLeft_toLeftOf="@+id/password_admin"
-            app:layout_constraintRight_toRightOf="@+id/password_admin"/>
+            app:layout_constraintTop_toBottomOf="@+id/password_user"
+            app:layout_constraintLeft_toLeftOf="@+id/password_user"
+            app:layout_constraintRight_toRightOf="@+id/password_user"/>
 
         <EditText
-            android:id="@+id/telp_admin"
+            android:id="@+id/telp_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -123,12 +143,12 @@
             android:text="Alamat"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/telp_admin"
-            app:layout_constraintLeft_toLeftOf="@+id/telp_admin"
-            app:layout_constraintRight_toRightOf="@+id/telp_admin"/>
+            app:layout_constraintTop_toBottomOf="@+id/telp_user"
+            app:layout_constraintLeft_toLeftOf="@+id/telp_user"
+            app:layout_constraintRight_toRightOf="@+id/telp_user"/>
 
         <EditText
-            android:id="@+id/address_admin"
+            android:id="@+id/address_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -136,17 +156,60 @@
             app:layout_constraintLeft_toLeftOf="@+id/alamat"
             app:layout_constraintRight_toRightOf="@+id/alamat"/>
 
+        <TextView
+            android:id="@+id/jurusan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Jurusan"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/address_user"
+            app:layout_constraintLeft_toLeftOf="@+id/address_user"
+            app:layout_constraintRight_toRightOf="@+id/address_user"/>
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/department_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"
+            app:layout_constraintTop_toBottomOf="@+id/jurusan"
+            app:layout_constraintLeft_toLeftOf="@+id/jurusan"
+            app:layout_constraintRight_toRightOf="@+id/jurusan"/>
+
+
+        <TextView
+            android:id="@+id/pengalaman"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pengalaman"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/department_user"
+            app:layout_constraintLeft_toLeftOf="@+id/department_user"
+            app:layout_constraintRight_toRightOf="@+id/department_user"/>
+
+        <EditText
+            android:id="@+id/expertise_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text|textMultiLine"
+            android:layout_margin="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/pengalaman"
+            app:layout_constraintLeft_toLeftOf="@+id/pengalaman"
+            app:layout_constraintRight_toRightOf="@+id/pengalaman"/>
         <Button
-            android:id="@+id/save_admin"
+            android:id="@+id/save_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/md_grey_900"
             android:text="Save"
             android:layout_margin="8dp"
             android:textColor="@android:color/white"
-            app:layout_constraintTop_toBottomOf="@+id/address_admin"
-            app:layout_constraintLeft_toLeftOf="@+id/address_admin"
-            app:layout_constraintRight_toRightOf="@+id/address_admin"/>
+            app:layout_constraintTop_toBottomOf="@+id/expertise_user"
+            app:layout_constraintLeft_toLeftOf="@+id/expertise_user"
+            app:layout_constraintRight_toRightOf="@+id/expertise_user"/>
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
 

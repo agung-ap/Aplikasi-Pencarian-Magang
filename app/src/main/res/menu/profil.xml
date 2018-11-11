@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/add_magang_info"
-        android:title="tambah magang"
-        android:icon="@drawable/icon_add"
+        android:id="@+id/edit_profil"
+        android:title="Edit Profil"
+        android:icon="@drawable/icon_edit"
         app:showAsAction="always" />
 </menu>

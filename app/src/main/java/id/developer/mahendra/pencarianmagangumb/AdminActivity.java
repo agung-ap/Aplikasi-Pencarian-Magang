@@ -11,8 +11,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,10 +22,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
+import id.developer.mahendra.pencarianmagangumb.data.model.PhotoUsers;
 import id.developer.mahendra.pencarianmagangumb.fragment.admin.DaftarLowonganPekerjaanAdmin;
 import id.developer.mahendra.pencarianmagangumb.fragment.admin.ProfilAdmin;
-import id.developer.mahendra.pencarianmagangumb.data.model.Mahasiswa;
+import id.developer.mahendra.pencarianmagangumb.data.model.Users;
+import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 public class AdminActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,7 +37,7 @@ public class AdminActivity extends AppCompatActivity
 
     private TextView userName;
     private TextView userEmail;
-
+    private ImageView userImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,8 +79,28 @@ public class AdminActivity extends AppCompatActivity
 
         userName = (TextView)headerView.findViewById(R.id.admin_name);
         userEmail = (TextView)headerView.findViewById(R.id.admin_email);
+        userImage = (ImageView)headerView.findViewById(R.id.admin_image);
 
         showUserNameAndEmailUser(auth);
+        showUserImageUser(auth);
+    }
+
+    private void showUserImageUser(FirebaseAuth auth) {
+        final FirebaseUser currentUser = auth.getCurrentUser();
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_PHOTO_TABLE);
+        databaseReference.child(currentUser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                PhotoUsers user = dataSnapshot.getValue(PhotoUsers.class);
+
+                Picasso.get().load(user.getImageUrl()).into(userImage);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
@@ -91,27 +114,6 @@ public class AdminActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.admin, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -149,7 +151,7 @@ public class AdminActivity extends AppCompatActivity
         databaseReference.child(currentUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Mahasiswa user = dataSnapshot.getValue(Mahasiswa.class);
+                Users user = dataSnapshot.getValue(Users.class);
 
                 userName.setText(user.getNama());
                 userEmail.setText(user.getEmail());

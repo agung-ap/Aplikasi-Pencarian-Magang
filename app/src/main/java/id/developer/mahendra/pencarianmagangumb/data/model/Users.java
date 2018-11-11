@@ -3,7 +3,7 @@ package id.developer.mahendra.pencarianmagangumb.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Mahasiswa implements Parcelable {
+public class Users implements Parcelable {
     private String nim;
     private String nama;
     private String email;
@@ -12,11 +12,11 @@ public class Mahasiswa implements Parcelable {
     private String alamat;
     private String jurusan;
     private String deskripsi;
-    private String linkCv;
+    //private String linkCv;
     private String Status;
-    private String imageURl;
+    //private String imageUrl;
 
-    public Mahasiswa() {
+    public Users() {
     }
 
     public String getNim() {
@@ -83,14 +83,6 @@ public class Mahasiswa implements Parcelable {
         this.deskripsi = deskripsi;
     }
 
-    public String getLinkCv() {
-        return linkCv;
-    }
-
-    public void setLinkCv(String linkCv) {
-        this.linkCv = linkCv;
-    }
-
     public String getStatus() {
         return Status;
     }
@@ -99,19 +91,12 @@ public class Mahasiswa implements Parcelable {
         Status = status;
     }
 
-    public String getImageURl() {
-        return imageURl;
-    }
 
-    public void setImageURl(String imageURl) {
-        this.imageURl = imageURl;
-    }
-
-    public static Creator<Mahasiswa> getCREATOR() {
+    public static Creator<Users> getCREATOR() {
         return CREATOR;
     }
 
-    protected Mahasiswa(Parcel in) {
+    protected Users(Parcel in) {
         nim = in.readString();
         nama = in.readString();
         email = in.readString();
@@ -120,9 +105,7 @@ public class Mahasiswa implements Parcelable {
         alamat = in.readString();
         jurusan = in.readString();
         deskripsi = in.readString();
-        linkCv = in.readString();
         Status = in.readString();
-        imageURl = in.readString();
     }
 
     @Override
@@ -135,9 +118,7 @@ public class Mahasiswa implements Parcelable {
         dest.writeString(alamat);
         dest.writeString(jurusan);
         dest.writeString(deskripsi);
-        dest.writeString(linkCv);
         dest.writeString(Status);
-        dest.writeString(imageURl);
     }
 
     @Override
@@ -145,15 +126,15 @@ public class Mahasiswa implements Parcelable {
         return 0;
     }
 
-    public static final Creator<Mahasiswa> CREATOR = new Creator<Mahasiswa>() {
+    public static final Creator<Users> CREATOR = new Creator<Users>() {
         @Override
-        public Mahasiswa createFromParcel(Parcel in) {
-            return new Mahasiswa(in);
+        public Users createFromParcel(Parcel in) {
+            return new Users(in);
         }
 
         @Override
-        public Mahasiswa[] newArray(int size) {
-            return new Mahasiswa[size];
+        public Users[] newArray(int size) {
+            return new Users[size];
         }
     };
 }

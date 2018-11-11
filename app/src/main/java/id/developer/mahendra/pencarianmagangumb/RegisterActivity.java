@@ -20,7 +20,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import id.developer.mahendra.pencarianmagangumb.data.model.Mahasiswa;
+import id.developer.mahendra.pencarianmagangumb.data.model.Users;
+import id.developer.mahendra.pencarianmagangumb.data.model.PhotoUsers;
+import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -70,12 +72,12 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         if (TextUtils.isEmpty(inputPassword)) {
-            Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
+            password.setError("Password Tidak boleh kosong");
             return;
         }
 
         if (inputPassword.length() < 6) {
-            Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+            password.setError("password kurang dari 6 karakter");
             return;
         }
         //show progress bar
@@ -94,45 +96,73 @@ public class RegisterActivity extends AppCompatActivity {
                         } else {
                             //when success on register
                             //hide progressbar
-                            progressBar.setVisibility(View.GONE);
                             String inputUid = task.getResult().getUser().getUid();
                             //set database field
-                            Mahasiswa user = new Mahasiswa();
-                            user.setNim("");
+                            Users user = new Users();
+                            user.setNim(Constant.NONE);
                             user.setNama(inputNama);
                             user.setEmail(inputEmail);
                             user.setPassword(inputPassword);
-                            user.setTelp("");
-                            user.setAlamat("");
-                            user.setJurusan("");
-                            user.setDeskripsi("");
-                            user.setLinkCv("");
-                            user.setStatus("user");
-                            user.setImageURl("");
+                            user.setTelp(Constant.NONE);
+                            user.setAlamat(Constant.NONE);
+                            user.setJurusan(Constant.NONE);
+                            user.setDeskripsi(Constant.NONE);
+                            user.setStatus(Constant.ROLE_USER);
+
+                            PhotoUsers userImage = new PhotoUsers();
+                            userImage.setImageUrl(Constant.NONE);
+
                             //input user data to database users
-                            createUser(inputUid, user);
+                            createUser(inputUid, user, userImage);
                         }
                     }
                 });
     }
 
-    private void createUser(String inputUid, Mahasiswa user) {
+    private void createUser(final String inputUid, final Users user, final PhotoUsers userImage) {
         //start saving data on firebase realtime database
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
         databaseReference.child(inputUid).setValue(user)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
-                            Toast.makeText(RegisterActivity.this, "Register Berhasil",
-                                    Toast.LENGTH_SHORT).show();
+                            //create image table
+                            createImageTable(inputUid, userImage);
 
-                            startActivity(new Intent(RegisterActivity.this, UserActivity.class));
-                            finish();
+
                         }else {
                             Toast.makeText(RegisterActivity.this, "Register gagal : " + task.getException(),
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+    }
+
+    private void createImageTable(String inputUid, PhotoUsers userImage){
+        final DatabaseReference databaseImageReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_PHOTO_TABLE);
+        databaseImageReference.child(inputUid).setValue(userImage).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(RegisterActivity.this, "Register Berhasil",
+                            Toast.LENGTH_SHORT).show();
+
+                    startActivity(new Intent(RegisterActivity.this, UserActivity.class));
+                    finish();
+                }else {
+                    Toast.makeText(RegisterActivity.this, "Register gagal : " + task.getException(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+        finish();
     }
 }

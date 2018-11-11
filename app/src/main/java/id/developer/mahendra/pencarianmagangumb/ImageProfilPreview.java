@@ -1,23 +1,19 @@
 package id.developer.mahendra.pencarianmagangumb;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,16 +21,16 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import id.developer.mahendra.pencarianmagangumb.data.helper.FirebaseHelper;
-import id.developer.mahendra.pencarianmagangumb.data.model.Mahasiswa;
+import id.developer.mahendra.pencarianmagangumb.data.model.PhotoUsers;
+import id.developer.mahendra.pencarianmagangumb.util.Constant;
+
+
 
 public class ImageProfilPreview extends AppCompatActivity {
     private Uri filePath;
@@ -43,6 +39,7 @@ public class ImageProfilPreview extends AppCompatActivity {
     @BindView(R.id.upload)
     Button uploadPhoto;
 
+    public static final int UPLOADED= 21;
     //Firebase
     private FirebaseAuth auth;
     private StorageReference storageReference;
@@ -94,9 +91,14 @@ public class ImageProfilPreview extends AppCompatActivity {
                             ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-
-                                    createUser(auth.getUid(), uri.toString());
                                     progressDialog.dismiss();
+
+                                    PhotoUsers user = new PhotoUsers();
+                                    user.setImageUrl(uri.toString());
+
+                                    createUser(auth.getUid(), user);
+
+
                                 }
                             });
                         }
@@ -118,15 +120,16 @@ public class ImageProfilPreview extends AppCompatActivity {
                     });
         }
     }
-    public void createUser(String inputUid,String imagePath) {
+    public void createUser(String inputUid,PhotoUsers user) {
         //start saving data on firebase realtime database
 
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
-        databaseReference.child(inputUid).child("imageURI").setValue(imagePath)
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_PHOTO_TABLE);
+        databaseReference.child(inputUid).setValue(user)
         .addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-
+                setResult(UPLOADED);
+                finish();
             }
         });
     }

@@ -30,7 +30,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
+<!--
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
                 app:layout_constraintLeft_toLeftOf="@+id/user_profil_image"
                 app:layout_constraintTop_toTopOf="@+id/user_profil_image"
                 app:layout_constraintVertical_bias="1.0" />
-
+-->
             <TextView
                 android:id="@+id/user_profil_name"
                 android:layout_width="wrap_content"

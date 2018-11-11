@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,12 +27,13 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import id.developer.mahendra.pencarianmagangumb.EditProfilUser;
 import id.developer.mahendra.pencarianmagangumb.ImageProfilPreview;
 import id.developer.mahendra.pencarianmagangumb.R;
 import id.developer.mahendra.pencarianmagangumb.UserActivity;
-import id.developer.mahendra.pencarianmagangumb.data.model.Mahasiswa;
-
-import static android.app.Activity.RESULT_OK;
+import id.developer.mahendra.pencarianmagangumb.data.model.Users;
+import id.developer.mahendra.pencarianmagangumb.data.model.PhotoUsers;
+import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 public class ProfilUser extends Fragment {
     @BindView(R.id.user_profil_image)
@@ -65,32 +69,45 @@ public class ProfilUser extends Fragment {
         setHasOptionsMenu(true);
 
         auth = FirebaseAuth.getInstance();
-        setUserProfil(auth);
-
-        userImage.setClickable(true);
-        userImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                chooseImage();
-                //Toast.makeText(getActivity(), "Profile Image Clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
+        showUserProfil(auth);
 
         return view;
     }
 
-    private void setUserProfil(FirebaseAuth auth){
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.profil, menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.edit_profil) {
+            Intent intent = new Intent(getActivity(), EditProfilUser.class);
+            startActivityForResult(intent, EditProfilUser.REQUEST_ADD);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private void showUserProfil(FirebaseAuth auth){
         final FirebaseUser currentUser = auth.getCurrentUser();
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
-                .getReference("users");
+                .getReference(Constant.USERS_TABLE);
 
         databaseReference.child(currentUser.getUid())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Mahasiswa user = dataSnapshot.getValue(Mahasiswa.class);
+                        Users user = dataSnapshot.getValue(Users.class);
 
                         userName.setText(user.getNama());
                         userNim.setText(user.getNim());
@@ -99,6 +116,12 @@ public class ProfilUser extends Fragment {
                         userAddress.setText(user.getAlamat());
                         userDepartment.setText(user.getJurusan());
                         userExpertise.setText(user.getDeskripsi());
+                        /*
+                        Users userImageUrl = dataSnapshot.child("user_image").getValue(Users.class);
+                        Picasso.get()
+                                .load(userImageUrl.getImageURl())
+                                .placeholder(R.drawable.background_image)
+                                .into(userImage);*/
                     }
 
                     @Override
@@ -106,16 +129,17 @@ public class ProfilUser extends Fragment {
 
                     }
                 });
-        //get image file
-        databaseReference.child(currentUser.getUid()).child("imageURI")
+
+        final DatabaseReference databaseImageReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.USERS_PHOTO_TABLE);
+
+        databaseImageReference.child(currentUser.getUid())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String imagePath = dataSnapshot.getValue(String.class);
-
-                        //Log.i("IMAGE PATH", "path " + imagePath);
+                        PhotoUsers user = dataSnapshot.getValue(PhotoUsers.class);
                         Picasso.get()
-                                .load(imagePath)
+                                .load(user.getImageUrl())
                                 .placeholder(R.drawable.background_image)
                                 .into(userImage);
                     }
@@ -125,35 +149,20 @@ public class ProfilUser extends Fragment {
 
                     }
                 });
+
     }
 
-    private void chooseImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null )
+        if(requestCode == EditProfilUser.REQUEST_ADD)
         {
+            Toast.makeText(getActivity(), "berhasil di simpan",
+                    Toast.LENGTH_SHORT).show();
 
-            //Log.i("IMAGE PATH ", "path : " + filePath.toString());
-            Intent intent = new Intent(getActivity(), ImageProfilPreview.class);
-            intent.putExtra("URI", data.getData().toString());
-            startActivity(intent);
-            /*
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                userImage.setImageBitmap(bitmap);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }*/
+        } else if (requestCode == EditProfilUser.REQUEST_BACK) {
+
         }
     }
 }

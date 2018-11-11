@@ -14,7 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import id.developer.mahendra.pencarianmagangumb.data.model.Mahasiswa;
+import id.developer.mahendra.pencarianmagangumb.data.model.Users;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         databaseReference.child(currentUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Mahasiswa user = dataSnapshot.getValue(Mahasiswa.class);
+                Users user = dataSnapshot.getValue(Users.class);
 
                 if (user.getStatus().equals("admin")){
                     startActivity(new Intent(MainActivity.this, AdminActivity.class));

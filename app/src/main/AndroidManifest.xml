@@ -36,7 +36,10 @@
             android:label="@string/title_activity_admin"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".EditProfilAdmin" />
-        <activity android:name=".ImageProfilPreview"></activity>
+        <activity android:name=".ImageProfilPreview" />
+        <activity android:name=".EditProfilUser" />
+        <activity android:name=".MagangPost" />
+        <activity android:name=".MagangDetailAdminActivity"></activity>
     </application>
 
 </manifest>

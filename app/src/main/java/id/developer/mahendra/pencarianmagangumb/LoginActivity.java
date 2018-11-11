@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.email)
@@ -50,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
 
         // get reference to 'users' node
-        databaseReference = database.getReference("users");
+        databaseReference = database.getReference(Constant.USERS_TABLE);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
@@ -73,12 +75,12 @@ public class LoginActivity extends AppCompatActivity {
         final String inputPassword = password.getText().toString().trim();
 
         if (TextUtils.isEmpty(inputEmail)) {
-            Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
+            email.setError("Email tidak boleh kosong");
             return;
         }
 
         if (TextUtils.isEmpty(inputPassword)) {
-            Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
+            password.setError("Password tidak boleh kosong");
             return;
         }
 
@@ -93,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                             // there was an error
                             progressBar.setVisibility(View.GONE);
                             if (inputPassword.length() < 6) {
-                                password.setError("password dibawah rata2");
+                                password.setError("password kurang dari 6 karakter");
                             } else {
                                 Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_LONG).show();
                             }
@@ -104,14 +106,15 @@ public class LoginActivity extends AppCompatActivity {
                             databaseReference.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    String status = dataSnapshot.child("users").child(uid).child("status").getValue(String.class);
+                                    String status = dataSnapshot.child(Constant.USERS_TABLE).child(uid).child("status").getValue(String.class);
                                     if (status.equals("admin")){
-                                        Toast.makeText(LoginActivity.this, "berhasil login admin", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(LoginActivity.this, "Login Berhasil", Toast.LENGTH_SHORT).show();
+
                                         startActivity(new Intent(LoginActivity.this, AdminActivity.class));
                                         finish();
                                     }else {
-                                        Toast.makeText(LoginActivity.this, "login berhasil", Toast.LENGTH_SHORT).show();
-                                        //email.requestFocus();
+                                        Toast.makeText(LoginActivity.this, "Login Berhasil", Toast.LENGTH_SHORT).show();
+
                                         startActivity(new Intent(LoginActivity.this, UserActivity.class));
                                         finish();
                                     }
