@@ -1,5 +1,6 @@
 package id.developer.mahendra.pencarianmagangumb;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -7,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,20 +29,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import id.developer.mahendra.pencarianmagangumb.data.model.CvUsers;
 import id.developer.mahendra.pencarianmagangumb.data.model.Users;
 import id.developer.mahendra.pencarianmagangumb.data.model.PhotoUsers;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 public class EditProfilUser extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-
+    private static final String TAG = EditProfilUser.class.getSimpleName();
 
     @BindView(R.id.image_preview_user)
     ImageView imagePreviewUser;
@@ -58,6 +66,8 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
     AppCompatSpinner department;
     @BindView(R.id.expertise_user)
     EditText expertise;
+    @BindView(R.id.upload_cv_user)
+    Button uploadCv;
     @BindView(R.id.save_user)
     Button save;
 
@@ -70,6 +80,7 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
     public static final int REQUEST_ADD = 20;
     public static final int REQUEST_BACK = 30;
     private static final int PICK_IMAGE_REQUEST = 71;
+    private static final int PICK_PDF_REQUEST = 72;
 
 
     @Override
@@ -94,15 +105,26 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
                 chooseImage();
             }
         });
+        uploadCv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                chosePDFFile();
+            }
+        });
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setUserData(auth, data());
                 //uploadImage(imageFilePath);
-
             }
         });
+    }
 
+    private void chosePDFFile() {
+        Intent intent = new Intent();
+        intent.setType("application/pdf");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_PDF_REQUEST);
     }
 
     private void chooseImage() {
@@ -110,7 +132,6 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-
     }
 
     private void spinnerSetup(){
@@ -122,7 +143,6 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
         // Creating adapter for spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, jurusan);
-
         // Drop down layout style - list view with radio button
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // attaching data adapter to spinner
@@ -188,17 +208,16 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         PhotoUsers user = dataSnapshot.getValue(PhotoUsers.class);
-                        Picasso.get().load(user.getImageUrl()).into(imagePreviewUser);
-
+                        Picasso.get().load(user.getImageUrl())
+                                .placeholder(R.drawable.background_image)
+                                .into(imagePreviewUser);
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
                 });
     }
-
 
     private void setUserData(FirebaseAuth auth, Users user){
         final FirebaseUser currentUser = auth.getCurrentUser();
@@ -208,7 +227,7 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
-
+                            setEmailPassword(currentUser, email, password);
                             setResult(REQUEST_ADD);
                             finish();
                         }else {
@@ -216,6 +235,47 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
                         }
                     }
                 });
+
+
+    }
+
+    private void setEmailPassword(FirebaseUser currentUser, EditText email, EditText password) {
+        if (currentUser != null && !email.getText().toString().trim().equals("")){
+            currentUser.updateEmail(email.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(EditProfilUser.this, "Email address is updated.", Toast.LENGTH_LONG).show();
+
+                    } else {
+                        Toast.makeText(EditProfilUser.this, "Failed to update email!", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }else if (email.getText().toString().trim().equals("")) {
+            email.setError("Enter email");
+        }
+
+        if (currentUser != null && !password.getText().toString().trim().equals("")) {
+            if (password.getText().toString().trim().length() < 6) {
+                password.setError("Password too short, enter minimum 6 characters");
+            } else {
+                currentUser.updatePassword(password.getText().toString().trim())
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(EditProfilUser.this, "Password is updated", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Log.i(TAG, "Pass upadte failed : " + task.getException() );
+                                    Toast.makeText(EditProfilUser.this, "Failed to update password!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+        } else if (password.getText().toString().trim().equals("")) {
+            password.setError("Enter password");
+        }
     }
 
     @Override
@@ -248,9 +308,78 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
             }
         }
 
+        if (requestCode == PICK_PDF_REQUEST){
+            if (data.getData() != null) {
+                setUploadCv(data.getData());
+            }else {
+                Toast.makeText(EditProfilUser.this, "URI is null", Toast.LENGTH_SHORT).show();
+            }
+        }
+
         if (requestCode == ImageProfilPreview.UPLOADED){
             Toast.makeText(EditProfilUser.this, "berhasil diupload",
                     Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    private void setUploadCv(final Uri filePath){
+        if(filePath != null)
+        {
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+
+            final StorageReference ref = storageReference.child("cv/"+ UUID.randomUUID().toString());
+            ref.putFile(filePath)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            //Toast.makeText(ImageProfilPreview.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    //hide progress bar
+                                    progressDialog.dismiss();
+                                    //show url in log file
+                                    Log.i(TAG, "Pdf url : " + uri.toString());
+                                    //mapping url in model to upload to database
+                                    CvUsers userCv = new CvUsers();
+                                    userCv.setCvUrl(uri.toString());
+                                    //uploading to database
+                                    createUser(auth.getUid(), userCv);
+
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            //Toast.makeText(ImageProfilPreview.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                                    .getTotalByteCount());
+                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                        }
+                    });
+        }
+    }
+
+    public void createUser(String inputUid,CvUsers user) {
+        //start saving data on firebase realtime database
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_CV_TABLE);
+        databaseReference.child(inputUid).setValue(user)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.i(TAG, "Status : " + aVoid.toString());
+                    }
+                });
     }
 }

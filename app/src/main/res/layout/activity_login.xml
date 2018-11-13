@@ -72,14 +72,5 @@
             android:textColor="@color/md_white_1000"
             android:textSize="15dp" />
 
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:visibility="gone"
-            android:indeterminateTint="#5173bd"
-            android:indeterminateTintMode="src_in"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center|bottom"
-            android:layout_height="wrap_content" />
-
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

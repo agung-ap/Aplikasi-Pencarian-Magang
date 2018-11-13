@@ -1,13 +1,11 @@
 package id.developer.mahendra.pencarianmagangumb.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -16,7 +14,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.developer.mahendra.pencarianmagangumb.R;
 import id.developer.mahendra.pencarianmagangumb.data.model.Magang;
-import id.developer.mahendra.pencarianmagangumb.fragment.user.DaftarLowonganPekerjaan;
 
 public class MagangListAdapter extends RecyclerView.Adapter<MagangListAdapter.ViewHolder> {
     private Context context;

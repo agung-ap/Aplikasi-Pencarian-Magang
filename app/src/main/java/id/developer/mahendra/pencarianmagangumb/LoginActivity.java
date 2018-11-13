@@ -1,5 +1,6 @@
 package id.developer.mahendra.pencarianmagangumb;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -8,7 +9,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,9 +34,8 @@ public class LoginActivity extends AppCompatActivity {
     Button login;
     @BindView(R.id.register_button)
     Button registerButton;
-    @BindView(R.id.progress_bar)
-    ProgressBar progressBar;
 
+    private ProgressDialog progressDialog;
     private FirebaseAuth auth;
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
@@ -46,20 +45,19 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-
+        //init firebase
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-
         // get reference to 'users' node
         databaseReference = database.getReference(Constant.USERS_TABLE);
-
+        //login button
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 handleLogin();
             }
         });
-
+        //goto register activity
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
     private void handleLogin() {
         final String inputEmail = email.getText().toString().trim();
         final String inputPassword = password.getText().toString().trim();
-
+        //check if email or password is null or lack
         if (TextUtils.isEmpty(inputEmail)) {
             email.setError("Email tidak boleh kosong");
             return;
@@ -83,24 +81,25 @@ public class LoginActivity extends AppCompatActivity {
             password.setError("Password tidak boleh kosong");
             return;
         }
-
-        progressBar.setVisibility(View.VISIBLE);
-
+        //show progress bar
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Please wait...");
+        progressDialog.show();
+        progressDialog.setCanceledOnTouchOutside(false);
+        //sign in process
         auth.signInWithEmailAndPassword(inputEmail, inputPassword)
                 .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
                         if (!task.isSuccessful()) {
                             // there was an error
-                            progressBar.setVisibility(View.GONE);
+                            progressDialog.dismiss();
                             if (inputPassword.length() < 6) {
                                 password.setError("password kurang dari 6 karakter");
                             } else {
                                 Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_LONG).show();
                             }
                         } else {
-
                             final String uid = task.getResult().getUser().getUid();
                             final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                             databaseReference.addValueEventListener(new ValueEventListener() {
@@ -108,11 +107,13 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     String status = dataSnapshot.child(Constant.USERS_TABLE).child(uid).child("status").getValue(String.class);
                                     if (status.equals("admin")){
+                                        progressDialog.dismiss();
                                         Toast.makeText(LoginActivity.this, "Login Berhasil", Toast.LENGTH_SHORT).show();
 
                                         startActivity(new Intent(LoginActivity.this, AdminActivity.class));
                                         finish();
                                     }else {
+                                        progressDialog.dismiss();
                                         Toast.makeText(LoginActivity.this, "Login Berhasil", Toast.LENGTH_SHORT).show();
 
                                         startActivity(new Intent(LoginActivity.this, UserActivity.class));
@@ -125,20 +126,8 @@ public class LoginActivity extends AppCompatActivity {
 
                                 }
                             });
-/*
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();*/
                         }
                     }
                 });
     }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
-
-
 }

@@ -28,9 +28,9 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.developer.mahendra.pencarianmagangumb.EditProfilUser;
-import id.developer.mahendra.pencarianmagangumb.ImageProfilPreview;
 import id.developer.mahendra.pencarianmagangumb.R;
 import id.developer.mahendra.pencarianmagangumb.UserActivity;
+import id.developer.mahendra.pencarianmagangumb.data.model.CvUsers;
 import id.developer.mahendra.pencarianmagangumb.data.model.Users;
 import id.developer.mahendra.pencarianmagangumb.data.model.PhotoUsers;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
@@ -52,6 +52,8 @@ public class ProfilUser extends Fragment {
     TextView userDepartment;
     @BindView(R.id.user_profil_expertise)
     TextView userExpertise;
+    @BindView(R.id.user_profil_cv)
+    TextView userCv;
 
     private FirebaseAuth auth;
 
@@ -116,12 +118,6 @@ public class ProfilUser extends Fragment {
                         userAddress.setText(user.getAlamat());
                         userDepartment.setText(user.getJurusan());
                         userExpertise.setText(user.getDeskripsi());
-                        /*
-                        Users userImageUrl = dataSnapshot.child("user_image").getValue(Users.class);
-                        Picasso.get()
-                                .load(userImageUrl.getImageURl())
-                                .placeholder(R.drawable.background_image)
-                                .into(userImage);*/
                     }
 
                     @Override
@@ -129,10 +125,9 @@ public class ProfilUser extends Fragment {
 
                     }
                 });
-
+        //show image file
         final DatabaseReference databaseImageReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.USERS_PHOTO_TABLE);
-
         databaseImageReference.child(currentUser.getUid())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
@@ -150,8 +145,26 @@ public class ProfilUser extends Fragment {
                     }
                 });
 
-    }
+        final DatabaseReference databaseCvReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.USERS_CV_TABLE);
+        databaseCvReference.child(currentUser.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        CvUsers user = dataSnapshot.getValue(CvUsers.class);
+                        if (user.getCvUrl().equals(Constant.NONE)){
+                            userCv.setText(R.string.cv_is_empty);
+                        }else {
+                            userCv.setText(R.string.cv_is_not_empty);
+                        }
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

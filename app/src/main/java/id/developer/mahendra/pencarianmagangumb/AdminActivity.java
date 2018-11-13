@@ -134,7 +134,7 @@ public class AdminActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.fragment_layout_admin, fragment);
             fragmentTransaction.commit();
 
-        } else if (id == R.id.help_admin) {
+        } else if (id == R.id.notification) {
 
         } else if (id == R.id.log_out_admin) {
             auth.signOut();

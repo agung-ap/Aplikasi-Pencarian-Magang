@@ -167,13 +167,51 @@ public class EditProfilAdmin extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
+                            setEmailPassword(currentUser, email, password);
                             setResult(REQUEST_ADD);
-                            finish();
                         }else {
 
                         }
                     }
                 });
+    }
+
+    private void setEmailPassword(FirebaseUser currentUser, EditText email, EditText password) {
+        if (currentUser != null && !email.getText().toString().trim().equals("")){
+            currentUser.updateEmail(email.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(EditProfilAdmin.this, "Email address is updated.", Toast.LENGTH_LONG).show();
+
+                    } else {
+                        Toast.makeText(EditProfilAdmin.this, "Failed to update email!", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }else if (email.getText().toString().trim().equals("")) {
+            email.setError("Enter email");
+        }
+
+        if (currentUser != null && !password.getText().toString().trim().equals("")) {
+            if (password.getText().toString().trim().length() < 6) {
+                password.setError("Password too short, enter minimum 6 characters");
+            } else {
+                currentUser.updatePassword(password.getText().toString().trim())
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(EditProfilAdmin.this, "Password is updated", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(EditProfilAdmin.this, "Failed to update password!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+        } else if (password.getText().toString().trim().equals("")) {
+            password.setError("Enter password");
+        }
     }
 
     @Override

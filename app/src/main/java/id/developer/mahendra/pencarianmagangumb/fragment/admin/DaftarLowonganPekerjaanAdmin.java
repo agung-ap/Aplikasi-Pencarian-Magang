@@ -39,7 +39,6 @@ import id.developer.mahendra.pencarianmagangumb.util.Constant;
 public class DaftarLowonganPekerjaanAdmin extends Fragment implements MagangListAdapter.DataListener{
     private FirebaseAuth auth;
 
-    private ArrayList<Magang> dataMagang;
     private TextView emptyMessage;
     private RecyclerView recyclerView;
     private MagangListAdapter magangListAdapter;
@@ -63,12 +62,13 @@ public class DaftarLowonganPekerjaanAdmin extends Fragment implements MagangList
         magangArrayList = new ArrayList<>();
         magangListAdapter = new MagangListAdapter(getActivity(), this);
 
-        getData(auth);
+        getData();
+        //magangListAdapter.notifyDataSetChanged();
+
         return view;
     }
 
-    private void getData(FirebaseAuth auth){
-        final FirebaseUser currentUser = auth.getCurrentUser();
+    private void getData(){
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.MAGANG_POSTING);
 
@@ -76,8 +76,7 @@ public class DaftarLowonganPekerjaanAdmin extends Fragment implements MagangList
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        //Inisialisasi ArrayList
-                        dataMagang = new ArrayList<>();
+
 
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             //Mapping data pada DataSnapshot ke dalam objek mahasiswa
@@ -93,11 +92,11 @@ public class DaftarLowonganPekerjaanAdmin extends Fragment implements MagangList
                         } else {
                             emptyMessage.setVisibility(View.GONE);
                             recyclerView.setVisibility(View.VISIBLE);
+
                             //init list data to adapter
                             magangListAdapter.setMagangData(magangArrayList);
                             //add Adapter to RecyclerView
                             recyclerView.setAdapter(magangListAdapter);
-
                         }
                     }
                     @Override
@@ -133,7 +132,7 @@ public class DaftarLowonganPekerjaanAdmin extends Fragment implements MagangList
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == MagangPost.REQUEST_POST){
+        if (requestCode == 41){
             Toast.makeText(getActivity(), "Magang baru telah diposting", Toast.LENGTH_SHORT).show();
         }
     }
@@ -152,5 +151,15 @@ public class DaftarLowonganPekerjaanAdmin extends Fragment implements MagangList
         intent.putExtras(bundle);
         //intent.putExtra("user status", );
         startActivity(intent);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 }

@@ -104,7 +104,9 @@ public class UserActivity extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 PhotoUsers user = dataSnapshot.getValue(PhotoUsers.class);
 
-                Picasso.get().load(user.getImageUrl()).into(userImage);
+                Picasso.get().load(user.getImageUrl())
+                        .placeholder(R.drawable.background_image)
+                        .into(userImage);
             }
 
             @Override

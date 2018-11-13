@@ -3,7 +3,6 @@ package id.developer.mahendra.pencarianmagangumb;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,9 +21,9 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import id.developer.mahendra.pencarianmagangumb.data.helper.FirebaseHelper;
 import id.developer.mahendra.pencarianmagangumb.data.model.Magang;
 import id.developer.mahendra.pencarianmagangumb.data.model.Users;
+import id.developer.mahendra.pencarianmagangumb.data.model.UsersApplyValidation;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 public class MagangPost extends AppCompatActivity {
@@ -49,6 +48,7 @@ public class MagangPost extends AppCompatActivity {
 
     public static final int REQUEST_POST = 41;
     public static final int REQUEST_EDIT = 42;
+    private ArrayList<Magang> userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +60,7 @@ public class MagangPost extends AppCompatActivity {
         //init firebase
         auth = FirebaseAuth.getInstance();
         getUserName(auth);
+        getUserId();
 
         isEdit = getIntent().getBooleanExtra("isEdit", false);
 
@@ -98,10 +99,60 @@ public class MagangPost extends AppCompatActivity {
     }
 
     private void setMagangData(FirebaseAuth auth, Magang posting){
-        final FirebaseUser currentUser = auth.getCurrentUser();
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
-                .getReference(Constant.MAGANG_POSTING);
-        databaseReference.child(databaseReference.push().getKey()).setValue(posting)
+        if (!isEdit) {
+            final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                    .getReference(Constant.MAGANG_POSTING);
+            databaseReference.child(databaseReference.push().getKey()).setValue(posting)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                UsersApplyValidation validation = new UsersApplyValidation();
+                                validation.setApply(false);
+
+                                for (int i = 0; i < userId.size(); i++) {
+                                    setApplyValidationData(userId.get(i).getKey(),
+                                            databaseReference.push().getKey(),
+                                            validation);
+                                }
+
+                            } else {
+
+                            }
+                        }
+                    });
+        }else {
+            final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                    .getReference(Constant.MAGANG_POSTING);
+            databaseReference.child(magangData.get(0).getKey()).setValue(posting)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                UsersApplyValidation validation = new UsersApplyValidation();
+                                validation.setApply(false);
+
+                                for (int i = 0; i < userId.size(); i++) {
+                                    setApplyValidationData(userId.get(i).getKey(),
+                                            magangData.get(0).getKey(),
+                                            validation);
+                                }
+
+                            } else {
+
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void setApplyValidationData(String userId, String magangId,
+                                        UsersApplyValidation usersApplyValidation){
+        final DatabaseReference userApplyValidationReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.USERS_APPLY_VALIDATION_TABLE);
+        userApplyValidationReference.child(userId)
+                .child(magangId)
+                .setValue(usersApplyValidation)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -111,6 +162,32 @@ public class MagangPost extends AppCompatActivity {
                         }else {
 
                         }
+                    }
+                });
+    }
+
+    private void getUserId(){
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.USERS_APPLY_VALIDATION_TABLE);
+
+        databaseReference
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        //Inisialisasi ArrayList
+                        userId = new ArrayList<>();
+
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            //Mapping data pada DataSnapshot ke dalam objek mahasiswa
+                            Magang posting = snapshot.getValue(Magang.class);
+
+                            posting.setKey(snapshot.getKey());
+                            userId.add(posting);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
                     }
                 });
     }

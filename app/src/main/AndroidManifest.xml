@@ -39,7 +39,8 @@
         <activity android:name=".ImageProfilPreview" />
         <activity android:name=".EditProfilUser" />
         <activity android:name=".MagangPost" />
-        <activity android:name=".MagangDetailAdminActivity"></activity>
+        <activity android:name=".MagangDetailAdminActivity" />
+        <activity android:name=".MagangDetailUserActivity"></activity>
     </application>
 
 </manifest>

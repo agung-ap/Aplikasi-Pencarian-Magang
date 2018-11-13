@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -26,8 +28,6 @@ import id.developer.mahendra.pencarianmagangumb.data.model.Users;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 public class MagangDetailAdminActivity extends AppCompatActivity {
-    @BindView(R.id.apply)
-    Button apply;
     @BindView(R.id.title_detail)
     TextView titleDetail;
     @BindView(R.id.company_name_detail)
@@ -40,12 +40,15 @@ public class MagangDetailAdminActivity extends AppCompatActivity {
     TextView requirementDetail;
 
     private ArrayList<Magang> magangData;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_magang_detail_admin);
         ButterKnife.bind(this);
+
+        auth = FirebaseAuth.getInstance();
 
         if (savedInstanceState == null){
             Bundle getBundle = getIntent().getExtras();
@@ -90,12 +93,54 @@ public class MagangDetailAdminActivity extends AppCompatActivity {
                 startActivityForResult(intent, MagangPost.REQUEST_EDIT);
                 break;
             case R.id.delete_magang_posting:
-
+                //deleteMagangPost();
                 break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void deleteMagangPost(){
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.MAGANG_POSTING)
+                .child(magangData.get(0).getKey());
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                dataSnapshot.getRef().removeValue();
+                deleteUsersApplyValidation(auth);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void deleteUsersApplyValidation(FirebaseAuth auth) {
+        final DatabaseReference userApplyValidationReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.USERS_APPLY_VALIDATION_TABLE)
+                .child(auth.getUid())
+                .child(magangData.get(0).getKey());
+
+        userApplyValidationReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                dataSnapshot.getRef().removeValue();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

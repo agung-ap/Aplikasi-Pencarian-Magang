@@ -1,5 +1,6 @@
 package id.developer.mahendra.pencarianmagangumb.fragment.user;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +22,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import id.developer.mahendra.pencarianmagangumb.MagangDetailAdminActivity;
+import id.developer.mahendra.pencarianmagangumb.MagangDetailUserActivity;
 import id.developer.mahendra.pencarianmagangumb.UserActivity;
 import id.developer.mahendra.pencarianmagangumb.R;
 import id.developer.mahendra.pencarianmagangumb.adapter.MagangListAdapter;
@@ -89,7 +92,6 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
                             magangListAdapter.setMagangData(magangArrayList);
                             //add Adapter to RecyclerView
                             recyclerView.setAdapter(magangListAdapter);
-
                         }
                     }
                     @Override
@@ -101,6 +103,19 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
 
     @Override
     public void onClick(Magang dataPosition) {
+        Bundle bundle = new Bundle();
 
+        ArrayList<Magang> magangModel = new ArrayList<>();
+        magangModel.add(dataPosition);
+
+        bundle.putParcelableArrayList(getString(R.string.GET_SELECTED_ITEM), magangModel);
+
+        //send data via intent
+        Intent intent = new Intent(this.getActivity(), MagangDetailUserActivity.class);
+        intent.putExtras(bundle);
+        //intent.putExtra("user status", );
+        startActivity(intent);
     }
+
+
 }

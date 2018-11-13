@@ -13,9 +13,9 @@
             android:icon="@drawable/icon_profile"
             android:title="Profile" />
         <item
-            android:id="@+id/help_admin"
-            android:icon="@drawable/icon_help"
-            android:title="Help" />
+            android:id="@+id/notification"
+            android:icon="@drawable/icon_notification"
+            android:title="Notification" />
         <item
             android:id="@+id/log_out_admin"
             android:icon="@drawable/icon_log_out"
