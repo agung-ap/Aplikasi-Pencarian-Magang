@@ -58,7 +58,8 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
         magangListAdapter = new MagangListAdapter(getActivity(), this);
 
         getData(auth);
-
+        //add Adapter to RecyclerView
+        recyclerView.setAdapter(magangListAdapter);
         return view;
     }
 
@@ -90,8 +91,7 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
                             recyclerView.setVisibility(View.VISIBLE);
                             //init list data to adapter
                             magangListAdapter.setMagangData(magangArrayList);
-                            //add Adapter to RecyclerView
-                            recyclerView.setAdapter(magangListAdapter);
+
                         }
                     }
                     @Override

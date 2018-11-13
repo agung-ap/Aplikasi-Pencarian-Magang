@@ -60,7 +60,7 @@ public class ProfilAdmin extends Fragment {
         setHasOptionsMenu(true);
 
         auth = FirebaseAuth.getInstance();
-        setAdminProfil(auth);
+        getAdminProfil(auth);
 
         return view;
     }
@@ -89,10 +89,10 @@ public class ProfilAdmin extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setAdminProfil(FirebaseAuth auth){
+    private void getAdminProfil(FirebaseAuth auth){
         final FirebaseUser currentUser = auth.getCurrentUser();
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
-                .getReference("users");
+                .getReference(Constant.USERS_TABLE);
 
         databaseReference.child(currentUser.getUid())
                 .addValueEventListener(new ValueEventListener() {

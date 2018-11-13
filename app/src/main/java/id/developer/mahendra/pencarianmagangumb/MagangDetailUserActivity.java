@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.developer.mahendra.pencarianmagangumb.data.model.Magang;
+import id.developer.mahendra.pencarianmagangumb.data.model.Users;
 import id.developer.mahendra.pencarianmagangumb.data.model.UsersApply;
 import id.developer.mahendra.pencarianmagangumb.data.model.UsersApplyValidation;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
@@ -48,6 +49,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
     ProgressBar isApplyValidation;
 
     private ArrayList<Magang> magangData;
+    private String username;
     private FirebaseAuth auth;
 
     private final static String TAG = MagangDetailUserActivity.class.getSimpleName();
@@ -60,6 +62,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         //init firebase auth
         auth = FirebaseAuth.getInstance();
+        getUserName(auth);
         //preference = new StorePreference(this);
         if (savedInstanceState == null){
             Bundle getBundle = getIntent().getExtras();
@@ -100,6 +103,9 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         UsersApply apply = new UsersApply();
         apply.setMagangPostId(magangData.get(0).getKey());
         apply.setUserId(auth.getUid());
+        apply.setUserName(username);
+        apply.setTitle(magangData.get(0).getTitle());
+        apply.setCompany(magangData.get(0).getCompanyName());
         return apply;
     }
 
@@ -177,20 +183,12 @@ public class MagangDetailUserActivity extends AppCompatActivity {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        //UsersApplyValidation validation = dataSnapshot.getValue(UsersApplyValidation.class);
-                        //magangArrayList = new ArrayList<>();
 
-                        //for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            //Mapping data pada DataSnapshot ke dalam objek mahasiswa
-                            //Magang posting = snapshot.getValue(Magang.class);
-
-                            //posting.setKey(snapshot.getKey());
                             if (magangData.get(0).getKey() != null){
                                 userValidation(auth, magangData.get(0).getKey());
                             }else {
                                 apply.setVisibility(View.VISIBLE);
                             }
-                        //}
 
                     }
 
@@ -225,6 +223,26 @@ public class MagangDetailUserActivity extends AppCompatActivity {
                             apply.setVisibility(View.VISIBLE);
                             apply.setClickable(true);
                         }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void getUserName(FirebaseAuth auth){
+        final FirebaseUser currentUser = auth.getCurrentUser();
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.USERS_TABLE);
+
+        databaseReference.child(currentUser.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Users users = dataSnapshot.getValue(Users.class);
+                        username = users.getNama();
                     }
 
                     @Override

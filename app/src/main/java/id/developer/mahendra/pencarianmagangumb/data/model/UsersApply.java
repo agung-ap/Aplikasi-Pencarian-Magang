@@ -6,13 +6,20 @@ import android.os.Parcelable;
 public class UsersApply implements Parcelable {
     private String magangPostId;
     private String userId;
+    private String userName;
+    private String title;
+    private String company;
 
     public UsersApply() {
     }
 
+
     protected UsersApply(Parcel in) {
         magangPostId = in.readString();
         userId = in.readString();
+        userName = in.readString();
+        title = in.readString();
+        company = in.readString();
     }
 
     public static final Creator<UsersApply> CREATOR = new Creator<UsersApply>() {
@@ -26,6 +33,20 @@ public class UsersApply implements Parcelable {
             return new UsersApply[size];
         }
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(magangPostId);
+        parcel.writeString(userId);
+        parcel.writeString(userName);
+        parcel.writeString(title);
+        parcel.writeString(company);
+    }
 
     public String getMagangPostId() {
         return magangPostId;
@@ -43,17 +64,31 @@ public class UsersApply implements Parcelable {
         this.userId = userId;
     }
 
-
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getUserName() {
+        return userName;
     }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(magangPostId);
-        parcel.writeString(userId);
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
+    public String getTitle() {
+        return title;
+    }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public static Creator<UsersApply> getCREATOR() {
+        return CREATOR;
+    }
 }

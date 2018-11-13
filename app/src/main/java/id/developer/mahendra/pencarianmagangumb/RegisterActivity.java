@@ -141,10 +141,11 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void createUser(final String inputUid, final Users user,
-                            final PhotoUsers userImage,
-                            final CvUsers userCv, final UsersApplyValidation usersApplyValidation) {
+                            final PhotoUsers userImage, final CvUsers userCv,
+                            final UsersApplyValidation usersApplyValidation) {
         //start saving data on firebase realtime database
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.USERS_TABLE);
         databaseReference.child(inputUid).setValue(user)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override

@@ -26,6 +26,7 @@ import com.squareup.picasso.Picasso;
 
 import id.developer.mahendra.pencarianmagangumb.data.model.PhotoUsers;
 import id.developer.mahendra.pencarianmagangumb.fragment.admin.DaftarLowonganPekerjaanAdmin;
+import id.developer.mahendra.pencarianmagangumb.fragment.admin.NotificationFragment;
 import id.developer.mahendra.pencarianmagangumb.fragment.admin.ProfilAdmin;
 import id.developer.mahendra.pencarianmagangumb.data.model.Users;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
@@ -135,7 +136,10 @@ public class AdminActivity extends AppCompatActivity
             fragmentTransaction.commit();
 
         } else if (id == R.id.notification) {
-
+            NotificationFragment fragment = new NotificationFragment();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_layout_admin, fragment);
+            fragmentTransaction.commit();
         } else if (id == R.id.log_out_admin) {
             auth.signOut();
         }

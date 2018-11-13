@@ -1,6 +1,18 @@
 package id.developer.mahendra.pencarianmagangumb.data.helper;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
+
+import id.developer.mahendra.pencarianmagangumb.data.model.Users;
 
 public class FirebaseHelper {
     private static FirebaseHelper instance;
@@ -14,7 +26,7 @@ public class FirebaseHelper {
         this.getContext = getContext;
     }
     /*
-    public void createUser(String inputUid, Users user, Class<?> cls) {
+    public void createUser(String inputUid, Users user, final Class cls) {
         //start saving data on firebase realtime database
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         databaseReference.child(inputUid).setValue(user)
