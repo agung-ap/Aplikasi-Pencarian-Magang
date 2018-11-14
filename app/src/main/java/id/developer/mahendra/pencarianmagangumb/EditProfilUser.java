@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -90,6 +91,7 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
         ButterKnife.bind(this);
 
         getSupportActionBar().setTitle("Edit Profil");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         auth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -147,6 +149,17 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // attaching data adapter to spinner
         department.setAdapter(dataAdapter);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private Users data(){

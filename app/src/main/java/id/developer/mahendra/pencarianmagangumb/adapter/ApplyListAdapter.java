@@ -20,9 +20,11 @@ import id.developer.mahendra.pencarianmagangumb.data.model.UsersApply;
 public class ApplyListAdapter extends RecyclerView.Adapter<ApplyListAdapter.ViewHolder> {
     private Context context;
     private ArrayList<UsersApply> usersApplyList;
+    private DataListener listener;
 
-    public ApplyListAdapter(Context context) {
+    public ApplyListAdapter(Context context, DataListener listener) {
         this.context = context;
+        this.listener = listener;
     }
 
     @NonNull
@@ -51,7 +53,7 @@ public class ApplyListAdapter extends RecyclerView.Adapter<ApplyListAdapter.View
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.nama_user_apply)
         TextView userName;
         @BindView(R.id.title_apply)
@@ -62,11 +64,18 @@ public class ApplyListAdapter extends RecyclerView.Adapter<ApplyListAdapter.View
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            listener.onClick(usersApplyList.get(getAdapterPosition()));
         }
     }
 
     //Membuat Interface
     public interface DataListener {
-        void onClick(Magang dataPosition);
+        void onClick(UsersApply dataPosition);
     }
 }

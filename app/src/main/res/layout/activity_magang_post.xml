@@ -82,7 +82,7 @@
             android:id="@+id/posting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/md_grey_800"
+            android:background="@color/button_color"
             android:text="Posting"
             android:layout_margin="8dp"
             android:textColor="@android:color/white" />

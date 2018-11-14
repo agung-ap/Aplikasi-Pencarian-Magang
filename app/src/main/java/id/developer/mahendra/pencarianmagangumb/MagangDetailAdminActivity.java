@@ -48,6 +48,8 @@ public class MagangDetailAdminActivity extends AppCompatActivity {
         setContentView(R.layout.activity_magang_detail_admin);
         ButterKnife.bind(this);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         auth = FirebaseAuth.getInstance();
 
         if (savedInstanceState == null){
@@ -64,6 +66,8 @@ public class MagangDetailAdminActivity extends AppCompatActivity {
 
     }
 
+
+
     private void showMagangDetail(){
         titleDetail.setText(magangData.get(0).getTitle());
         companyNameDetail.setText(magangData.get(0).getCompanyName());
@@ -75,8 +79,7 @@ public class MagangDetailAdminActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-            getMenuInflater().inflate(R.menu.magang_detail_admin, menu);
-
+        getMenuInflater().inflate(R.menu.magang_detail_admin, menu);
         return super.onCreateOptionsMenu(menu);
 
     }
@@ -94,6 +97,9 @@ public class MagangDetailAdminActivity extends AppCompatActivity {
                 break;
             case R.id.delete_magang_posting:
                 //deleteMagangPost();
+                break;
+            case android.R.id.home:
+                finish();
                 break;
         }
 

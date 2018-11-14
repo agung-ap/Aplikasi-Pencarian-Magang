@@ -3,6 +3,7 @@ package id.developer.mahendra.pencarianmagangumb;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -57,6 +58,7 @@ public class MagangPost extends AppCompatActivity {
         ButterKnife.bind(this);
 
         getSupportActionBar().setTitle("Posting Magang");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //init firebase
         auth = FirebaseAuth.getInstance();
         getUserName(auth);
@@ -77,6 +79,17 @@ public class MagangPost extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private Magang data(){

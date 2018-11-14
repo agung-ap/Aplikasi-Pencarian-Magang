@@ -1,5 +1,6 @@
 package id.developer.mahendra.pencarianmagangumb.fragment.admin;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -20,6 +22,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import id.developer.mahendra.pencarianmagangumb.AdminActivity;
+import id.developer.mahendra.pencarianmagangumb.MagangDetailAdminActivity;
+import id.developer.mahendra.pencarianmagangumb.NotificationDetailActivity;
 import id.developer.mahendra.pencarianmagangumb.R;
 import id.developer.mahendra.pencarianmagangumb.adapter.ApplyListAdapter;
 import id.developer.mahendra.pencarianmagangumb.data.model.ApplyNotification;
@@ -28,7 +32,7 @@ import id.developer.mahendra.pencarianmagangumb.data.model.Users;
 import id.developer.mahendra.pencarianmagangumb.data.model.UsersApply;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
-public class NotificationFragment extends Fragment {
+public class NotificationFragment extends Fragment implements ApplyListAdapter.DataListener{
     private static final String TAG = NotificationFragment.class.getSimpleName();
 
     private ArrayList<UsersApply> applyList;
@@ -40,7 +44,7 @@ public class NotificationFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //init arraylist
         applyList = new ArrayList<>();
-        applyListAdapter = new ApplyListAdapter(getActivity());
+        applyListAdapter = new ApplyListAdapter(getActivity(),this);
 
     }
 
@@ -135,4 +139,21 @@ public class NotificationFragment extends Fragment {
                     }
                 });
     }
+
+    @Override
+    public void onClick(UsersApply dataPosition) {
+        Bundle bundle = new Bundle();
+
+        ArrayList<UsersApply> notificationModel = new ArrayList<>();
+        notificationModel.add(dataPosition);
+
+        bundle.putParcelableArrayList(getString(R.string.GET_SELECTED_ITEM), notificationModel);
+        //send data via intent
+        Intent intent = new Intent(this.getActivity(), NotificationDetailActivity.class);
+        intent.putExtras(bundle);
+        //intent.putExtra("user status", );
+        startActivity(intent);
+    }
+
+
 }

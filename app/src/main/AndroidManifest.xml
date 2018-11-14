@@ -40,7 +40,9 @@
         <activity android:name=".EditProfilUser" />
         <activity android:name=".MagangPost" />
         <activity android:name=".MagangDetailAdminActivity" />
-        <activity android:name=".MagangDetailUserActivity"></activity>
+        <activity android:name=".MagangDetailUserActivity" />
+        <activity android:name=".NotificationDetailActivity"
+            android:theme="@style/NoActionBar"></activity>
     </application>
 
 </manifest>

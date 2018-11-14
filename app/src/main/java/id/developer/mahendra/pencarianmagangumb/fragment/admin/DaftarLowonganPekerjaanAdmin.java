@@ -63,6 +63,8 @@ public class DaftarLowonganPekerjaanAdmin extends Fragment implements MagangList
         magangListAdapter = new MagangListAdapter(getActivity(), this);
 
         getData();
+        //add Adapter to RecyclerView
+        recyclerView.setAdapter(magangListAdapter);
         //magangListAdapter.notifyDataSetChanged();
 
         return view;
@@ -95,8 +97,7 @@ public class DaftarLowonganPekerjaanAdmin extends Fragment implements MagangList
 
                             //init list data to adapter
                             magangListAdapter.setMagangData(magangArrayList);
-                            //add Adapter to RecyclerView
-                            recyclerView.setAdapter(magangListAdapter);
+
                         }
                     }
                     @Override

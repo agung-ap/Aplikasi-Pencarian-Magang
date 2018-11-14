@@ -1,10 +1,12 @@
 package id.developer.mahendra.pencarianmagangumb;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -60,6 +62,8 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_magang_detail_user);
         ButterKnife.bind(this);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //init firebase auth
         auth = FirebaseAuth.getInstance();
         getUserName(auth);
@@ -89,6 +93,17 @@ public class MagangDetailUserActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void showMagangDetail() {
@@ -216,7 +231,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
                             apply.setVisibility(View.VISIBLE);
                             apply.setClickable(false);
                             apply.setBackground(null);
-                            apply.setTextColor(getResources().getColor(R.color.colorPrimary));
+                            apply.setTextColor(Color.parseColor("#FF4C62C6"));
                             apply.setText(R.string.isApply);
                         }else {
                             isApplyValidation.setVisibility(View.GONE);
@@ -255,12 +270,6 @@ public class MagangDetailUserActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        getUserValidationData(auth);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         getUserValidationData(auth);
     }
 
