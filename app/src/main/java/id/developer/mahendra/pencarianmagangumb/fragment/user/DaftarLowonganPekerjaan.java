@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import id.developer.mahendra.pencarianmagangumb.data.model.Magang;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapter.DataListener{
+    private static final String TAG = DaftarLowonganPekerjaan.class.getSimpleName();
     private FirebaseAuth auth;
 
     private ArrayList<Magang> dataMagang;
@@ -44,6 +46,10 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
     private RecyclerView recyclerView;
     private MagangListAdapter magangListAdapter;
     private ArrayList<Magang> magangArrayList;
+    private ArrayList<Magang> searchList;
+    private  int indexNotMatch = 0, indexMatch = 0;
+
+    private String [] jobs;
 
     @Nullable
     @Override
@@ -77,6 +83,7 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
 
             @Override
             public boolean onQueryTextSubmit(String query) {
+                searchMagangByTitle(query);
                 Toast.makeText(getActivity(), query, Toast.LENGTH_SHORT).show();
                 return true;
             }
@@ -84,6 +91,23 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
             @Override
             public boolean onQueryTextChange(String newText) {
                 return false;
+            }
+        });
+
+        MenuItem menuItem = menu.findItem(R.id.search_magang);
+        menuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                magangArrayList.clear();
+                getData(auth);
+                //add Adapter to RecyclerView
+                recyclerView.setAdapter(magangListAdapter);
+                return true;
             }
         });
     }
@@ -155,14 +179,43 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
 
         ArrayList<Magang> magangModel = new ArrayList<>();
         magangModel.add(dataPosition);
-
+        //put parcelable
         bundle.putParcelableArrayList(getString(R.string.GET_SELECTED_ITEM), magangModel);
-
         //send data via intent
         Intent intent = new Intent(this.getActivity(), MagangDetailUserActivity.class);
         intent.putExtras(bundle);
         //intent.putExtra("user status", );
         startActivity(intent);
+    }
+
+    private void searchMagangByTitle(final String query){
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.MAGANG_POSTING);
+
+        Query queryData = databaseReference.orderByChild("title")
+                .startAt(query.toUpperCase())
+                .endAt(query.toLowerCase()+"\uf8ff");
+
+        queryData.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()){
+                    magangArrayList.clear();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                        Magang magang = snapshot.getValue(Magang.class);
+                        magangArrayList.add(magang);
+                    }
+
+                    magangListAdapter.setMagangData(magangArrayList);
+                    recyclerView.setAdapter(magangListAdapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
