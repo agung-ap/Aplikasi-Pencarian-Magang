@@ -199,17 +199,6 @@
             app:layout_constraintTop_toBottomOf="@+id/pengalaman"
             app:layout_constraintLeft_toLeftOf="@+id/pengalaman"
             app:layout_constraintRight_toRightOf="@+id/pengalaman"/>
-        <Button
-            android:id="@+id/upload_cv_user"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/md_light_green_700"
-            android:text="Upload Cv"
-            android:layout_margin="8dp"
-            android:textColor="@android:color/white"
-            app:layout_constraintTop_toBottomOf="@+id/expertise_user"
-            app:layout_constraintLeft_toLeftOf="@+id/expertise_user"
-            app:layout_constraintRight_toRightOf="@+id/expertise_user"/>
 
         <Button
             android:id="@+id/save_user"
@@ -219,9 +208,9 @@
             android:text="Save"
             android:layout_margin="8dp"
             android:textColor="@android:color/white"
-            app:layout_constraintTop_toBottomOf="@+id/upload_cv_user"
-            app:layout_constraintLeft_toLeftOf="@+id/upload_cv_user"
-            app:layout_constraintRight_toRightOf="@+id/upload_cv_user"/>
+            app:layout_constraintTop_toBottomOf="@+id/expertise_user"
+            app:layout_constraintLeft_toLeftOf="@+id/expertise_user"
+            app:layout_constraintRight_toRightOf="@+id/expertise_user"/>
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
 

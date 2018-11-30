@@ -177,6 +177,9 @@ public class NotificationDetailActivity extends AppCompatActivity {
                         userCv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                Intent intent = new Intent(NotificationDetailActivity.this, ViewUserCv.class);
+                                intent.putExtra("cv", cvUsers.getCvUrl());
+                                //startActivity(intent);
                                 Toast.makeText(NotificationDetailActivity.this,
                                         "User Cv " + cvUsers.getCvUrl(), Toast.LENGTH_SHORT).show();
                             }
@@ -200,10 +203,8 @@ public class NotificationDetailActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         final Users users = dataSnapshot.getValue(Users.class);
 
-                        emailUser = users.getEmail();
                         //show user data
                         userNim.setText(users.getNim());
-                        userEmail.setText(users.getEmail());
                         userPhone.setText(users.getTelp());
                         userDepartment.setText(users.getJurusan());
                         userExpertise.setText(users.getDeskripsi());

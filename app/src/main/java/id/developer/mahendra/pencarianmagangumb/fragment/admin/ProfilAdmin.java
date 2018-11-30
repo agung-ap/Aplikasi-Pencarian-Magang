@@ -102,7 +102,6 @@ public class ProfilAdmin extends Fragment {
 
                 adminName.setText(user.getNama());
                 adminStatus.setText(user.getStatus());
-                adminEmail.setText(user.getEmail());
                 adminTelp.setText(user.getTelp());
                 adminAddress.setText(user.getAlamat());
             }

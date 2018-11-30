@@ -8,42 +8,56 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import id.developer.mahendra.pencarianmagangumb.data.model.Users;
 
 public class FirebaseHelper {
     private static FirebaseHelper instance;
-    private static Context getContext;
+    private Context getContext;
+    private DatabaseReference databaseReference;
+    private String inputUid;
+    private Users userData;
 
     public static FirebaseHelper get() {
         return instance;
     }
 
-    public void context(Context getContext){
+    public FirebaseHelper context(Context getContext){
         this.getContext = getContext;
+        return instance;
     }
-    /*
-    public void createUser(String inputUid, Users user, final Class cls) {
-        //start saving data on firebase realtime database
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child(inputUid).setValue(user)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            Toast.makeText(getContext, "Register Berhasil",
-                                    Toast.LENGTH_SHORT).show();
 
-                            getContext.startActivity(new Intent(getContext, cls));
-                            //getContext.finish();
-                        }else {
-                            Toast.makeText(getContext, "Register gagal : " + task.getException(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }*/
+    public FirebaseHelper databaseReference(DatabaseReference databaseReference,
+                                            String inputUid, Users userData){
+        this.databaseReference = databaseReference;
+        this.inputUid = inputUid;
+        this.userData = userData;
+
+        return instance;
+    }
+
+    public DatabaseReference createUser() {
+        databaseReference.child(inputUid).setValue(userData);
+        return databaseReference;
+    }
+
+    public void completeListener(final Class cls){
+        createUser().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

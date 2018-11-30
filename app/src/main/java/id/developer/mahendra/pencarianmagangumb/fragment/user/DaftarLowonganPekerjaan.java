@@ -40,16 +40,12 @@ import id.developer.mahendra.pencarianmagangumb.util.Constant;
 public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapter.DataListener{
     private static final String TAG = DaftarLowonganPekerjaan.class.getSimpleName();
     private FirebaseAuth auth;
+    private DatabaseReference databaseReference;
 
-    private ArrayList<Magang> dataMagang;
     private TextView emptyMessage;
     private RecyclerView recyclerView;
     private MagangListAdapter magangListAdapter;
     private ArrayList<Magang> magangArrayList;
-    private ArrayList<Magang> searchList;
-    private  int indexNotMatch = 0, indexMatch = 0;
-
-    private String [] jobs;
 
     @Nullable
     @Override
@@ -69,7 +65,7 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
         magangArrayList = new ArrayList<>();
         magangListAdapter = new MagangListAdapter(getActivity(), this);
 
-        getData(auth);
+        getData();
         //add Adapter to RecyclerView
         recyclerView.setAdapter(magangListAdapter);
 
@@ -104,7 +100,7 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
                 magangArrayList.clear();
-                getData(auth);
+                getData();
                 //add Adapter to RecyclerView
                 recyclerView.setAdapter(magangListAdapter);
                 return true;
@@ -136,16 +132,13 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
         return super.onOptionsItemSelected(item);
     }
 
-    private void getData(FirebaseAuth auth){
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
-                .getReference(Constant.MAGANG_POSTING);
-
+    private void getData(){
+        databaseReference = FirebaseDatabase.getInstance().getReference(Constant.MAGANG_POSTING);
         databaseReference
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        //Inisialisasi ArrayList
-                        dataMagang = new ArrayList<>();
+                        magangArrayList.clear();
 
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             //Mapping data pada DataSnapshot ke dalam objek mahasiswa
@@ -154,7 +147,6 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
                             posting.setKey(snapshot.getKey());
                             magangArrayList.add(posting);
                         }
-
                         if (magangArrayList.size() == 0) {
                             emptyMessage.setVisibility(View.VISIBLE);
                             recyclerView.setVisibility(View.GONE);
@@ -163,7 +155,6 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
                             recyclerView.setVisibility(View.VISIBLE);
                             //init list data to adapter
                             magangListAdapter.setMagangData(magangArrayList);
-
                         }
                     }
                     @Override
@@ -217,6 +208,4 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
             }
         });
     }
-
-
 }

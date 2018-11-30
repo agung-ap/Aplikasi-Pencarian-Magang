@@ -106,8 +106,6 @@ public class EditProfilAdmin extends AppCompatActivity {
         //mapping data
         Users user = new Users();
         user.setNama(inputName);
-        user.setEmail(inputEmail);
-        user.setPassword(inputPassword);
         user.setTelp(inputPhone);
         user.setAlamat(inputAddress);
         user.setJurusan(departmentSelected);
@@ -129,10 +127,8 @@ public class EditProfilAdmin extends AppCompatActivity {
                         //Picasso.get().load(user.getImageURl()).into(imagePreviewUser);
 
                         name.setText(user.getNama());
-                        email.setText(user.getEmail());
                         phone.setText(user.getTelp());
                         address.setText(user.getAlamat());
-                        password.setText(user.getPassword());
                     }
 
                     @Override

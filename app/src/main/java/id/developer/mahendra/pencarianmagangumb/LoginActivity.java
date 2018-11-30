@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         //show progress bar
         progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Please wait...");
+        progressDialog.setMessage("Please wait...");
         progressDialog.show();
         progressDialog.setCanceledOnTouchOutside(false);
         //sign in process
@@ -105,7 +105,10 @@ public class LoginActivity extends AppCompatActivity {
                             databaseReference.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    String status = dataSnapshot.child(Constant.USERS_TABLE).child(uid).child("status").getValue(String.class);
+                                    String status = dataSnapshot.child(Constant.USERS_TABLE)
+                                            .child(uid)
+                                            .child("users_data")
+                                            .child("status").getValue(String.class);
                                     if (status.equals("admin")){
                                         progressDialog.dismiss();
                                         Toast.makeText(LoginActivity.this, "Login Berhasil", Toast.LENGTH_SHORT).show();

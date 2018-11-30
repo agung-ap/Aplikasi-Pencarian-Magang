@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,6 +36,7 @@ public class UserActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
+    private DatabaseReference databaseReference;
 
     private TextView userName;
     private TextView userEmail;
@@ -97,15 +99,17 @@ public class UserActivity extends AppCompatActivity
     }
 
     private void showUserImageUser(FirebaseAuth auth) {
-        final FirebaseUser currentUser = auth.getCurrentUser();
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_PHOTO_TABLE);
-        databaseReference.child(currentUser.getUid()).addValueEventListener(new ValueEventListener() {
+        databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
+        databaseReference.child(auth.getUid())
+                .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                PhotoUsers user = dataSnapshot.getValue(PhotoUsers.class);
-
-                Picasso.get().load(user.getImageUrl())
+                String image_url =
+                        dataSnapshot.child("image_url").getValue(String.class);
+                //load image
+                Picasso.get().load(image_url)
                         .placeholder(R.drawable.background_image)
+                        .error(R.drawable.background_image)
                         .into(userImage);
             }
 
@@ -156,15 +160,16 @@ public class UserActivity extends AppCompatActivity
     }
 
     private void showUserNameAndEmailUser(FirebaseAuth auth){
-        final FirebaseUser currentUser = auth.getCurrentUser();
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
-        databaseReference.child(currentUser.getUid()).addValueEventListener(new ValueEventListener() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        databaseReference.child(auth.getUid())
+                .child("users_data")
+                .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Users user = dataSnapshot.getValue(Users.class);
 
                 userName.setText(user.getNama());
-                userEmail.setText(user.getEmail());
+                userEmail.setText("Nim : "  + user.getNim());
             }
 
             @Override

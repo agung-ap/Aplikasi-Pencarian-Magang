@@ -67,8 +67,6 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
     AppCompatSpinner department;
     @BindView(R.id.expertise_user)
     EditText expertise;
-    @BindView(R.id.upload_cv_user)
-    Button uploadCv;
     @BindView(R.id.save_user)
     Button save;
 
@@ -107,12 +105,7 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
                 chooseImage();
             }
         });
-        uploadCv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                chosePDFFile();
-            }
-        });
+
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,13 +113,6 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
                 //uploadImage(imageFilePath);
             }
         });
-    }
-
-    private void chosePDFFile() {
-        Intent intent = new Intent();
-        intent.setType("application/pdf");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_PDF_REQUEST);
     }
 
     private void chooseImage() {
@@ -175,8 +161,6 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
         Users user = new Users();
         user.setNim(inputNim);
         user.setNama(inputName);
-        user.setEmail(inputEmail);
-        user.setPassword(inputPassword);
         user.setTelp(inputPhone);
         user.setAlamat(inputAddress);
         user.setJurusan(departmentSelected);
@@ -200,12 +184,10 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
 
                         name.setText(user.getNama());
                         nim.setText(user.getNim());
-                        email.setText(user.getEmail());
                         phone.setText(user.getTelp());
                         address.setText(user.getAlamat());
                         expertise.setText(user.getDeskripsi());
                         department.setTextDirection(1);
-                        password.setText(user.getPassword());
                     }
 
                     @Override
@@ -321,14 +303,6 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
             }
         }
 
-        if (requestCode == PICK_PDF_REQUEST){
-            if (data.getData() != null) {
-                setUploadCv(data.getData());
-            }else {
-                Toast.makeText(EditProfilUser.this, "URI is null", Toast.LENGTH_SHORT).show();
-            }
-        }
-
         if (requestCode == ImageProfilPreview.UPLOADED){
             Toast.makeText(EditProfilUser.this, "berhasil diupload",
                     Toast.LENGTH_SHORT).show();
@@ -336,63 +310,4 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
 
     }
 
-    private void setUploadCv(final Uri filePath){
-        if(filePath != null)
-        {
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
-
-            final StorageReference ref = storageReference.child("cv/"+ UUID.randomUUID().toString());
-            ref.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            //Toast.makeText(ImageProfilPreview.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    //hide progress bar
-                                    progressDialog.dismiss();
-                                    //show url in log file
-                                    Log.i(TAG, "Pdf url : " + uri.toString());
-                                    //mapping url in model to upload to database
-                                    CvUsers userCv = new CvUsers();
-                                    userCv.setCvUrl(uri.toString());
-                                    //uploading to database
-                                    createUser(auth.getUid(), userCv);
-
-                                }
-                            });
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            //Toast.makeText(ImageProfilPreview.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
-                        }
-                    });
-        }
-    }
-
-    public void createUser(String inputUid,CvUsers user) {
-        //start saving data on firebase realtime database
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_CV_TABLE);
-        databaseReference.child(inputUid).setValue(user)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.i(TAG, "Status : " + aVoid.toString());
-                    }
-                });
-    }
 }

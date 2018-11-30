@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import id.developer.mahendra.pencarianmagangumb.data.helper.FirebaseHelper;
 import id.developer.mahendra.pencarianmagangumb.data.model.PhotoUsers;
 import id.developer.mahendra.pencarianmagangumb.fragment.admin.DaftarLowonganPekerjaanAdmin;
 import id.developer.mahendra.pencarianmagangumb.fragment.admin.NotificationFragment;
@@ -39,6 +40,9 @@ public class AdminActivity extends AppCompatActivity
     private TextView userName;
     private TextView userEmail;
     private ImageView userImage;
+
+    private DatabaseReference reference;
+    private Users users;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +52,8 @@ public class AdminActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         auth = FirebaseAuth.getInstance();
+        reference = FirebaseDatabase.getInstance().getReference();
+        
         //get current user
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -158,7 +164,7 @@ public class AdminActivity extends AppCompatActivity
                 Users user = dataSnapshot.getValue(Users.class);
 
                 userName.setText(user.getNama());
-                userEmail.setText(user.getEmail());
+                userEmail.setText(user.getStatus());
             }
 
             @Override
