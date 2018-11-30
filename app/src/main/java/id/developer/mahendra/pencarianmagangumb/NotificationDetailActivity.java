@@ -258,7 +258,7 @@ public class NotificationDetailActivity extends AppCompatActivity {
                         .start();
 
                 UsersApplyValidation validation = new UsersApplyValidation();
-                validation.setApply(false);
+                //validation.setApply(false);
                 setUsersApplyValidation(validation);
             }
 

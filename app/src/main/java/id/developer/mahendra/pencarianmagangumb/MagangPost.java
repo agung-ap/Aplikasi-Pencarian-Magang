@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -43,13 +44,14 @@ public class MagangPost extends AppCompatActivity {
     Button posting;
 
     private FirebaseAuth auth;
+    private DatabaseReference databaseReference;
     private String userName;
     private Boolean isEdit;
     private ArrayList<Magang> magangData;
 
     public static final int REQUEST_POST = 41;
     public static final int REQUEST_EDIT = 42;
-    private ArrayList<Magang> userId;
+    private ArrayList<Users> userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,20 +63,21 @@ public class MagangPost extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //init firebase
         auth = FirebaseAuth.getInstance();
+        //Inisialisasi ArrayList
+        //userId = new ArrayList<>();
         getUserName(auth);
-        getUserId();
+        //getUserId();
 
         isEdit = getIntent().getBooleanExtra("isEdit", false);
 
         if (isEdit){
             getPostData();
         }
-
         //posting magang
         posting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setMagangData(auth, data());
+                setMagangData(data());
 
             }
         });
@@ -93,7 +96,6 @@ public class MagangPost extends AppCompatActivity {
     }
 
     private Magang data(){
-
         String inputTitle = title.getText().toString().trim();
         String inputCompanyName = companyName.getText().toString().trim();
         String inputCity = city.getText().toString().trim();
@@ -110,47 +112,41 @@ public class MagangPost extends AppCompatActivity {
 
         return posting;
     }
-
-    private void setMagangData(FirebaseAuth auth, Magang posting){
+    //set magang data to database
+    private void setMagangData(Magang posting){
         if (!isEdit) {
-            final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+            databaseReference = FirebaseDatabase.getInstance()
                     .getReference(Constant.MAGANG_POSTING);
-            databaseReference.child(databaseReference.push().getKey()).setValue(posting)
+            //generate uniq id
+            final String key = databaseReference.push().getKey();
+            //set magang posting to database
+            databaseReference.child(key).child("posting_data").setValue(posting)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                UsersApplyValidation validation = new UsersApplyValidation();
-                                validation.setApply(false);
-
-                                for (int i = 0; i < userId.size(); i++) {
-                                    setApplyValidationData(userId.get(i).getKey(),
-                                            databaseReference.push().getKey(),
-                                            validation);
-                                }
-
+                                //set users apply count
+                                databaseReference.child(key).child("users_apply").child("applyCount")
+                                        .setValue(0);
+                                Toast.makeText(MagangPost.this, "Posting Berhasil", Toast.LENGTH_SHORT).show();
+                                finish();
                             } else {
 
                             }
                         }
                     });
         }else {
-            final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+            databaseReference = FirebaseDatabase.getInstance()
                     .getReference(Constant.MAGANG_POSTING);
-            databaseReference.child(magangData.get(0).getKey()).setValue(posting)
+            databaseReference.child(magangData.get(0).getKey())
+                    .child("posting_data")
+                    .setValue(posting)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                UsersApplyValidation validation = new UsersApplyValidation();
-                                validation.setApply(false);
-
-                                for (int i = 0; i < userId.size(); i++) {
-                                    setApplyValidationData(userId.get(i).getKey(),
-                                            magangData.get(0).getKey(),
-                                            validation);
-                                }
-
+                                Toast.makeText(MagangPost.this, "Edit Posting Berhasil", Toast.LENGTH_SHORT).show();
+                                finish();
                             } else {
 
                             }
@@ -159,43 +155,18 @@ public class MagangPost extends AppCompatActivity {
         }
     }
 
-    private void setApplyValidationData(String userId, String magangId,
-                                        UsersApplyValidation usersApplyValidation){
-        final DatabaseReference userApplyValidationReference = FirebaseDatabase.getInstance()
-                .getReference(Constant.USERS_APPLY_VALIDATION_TABLE);
-        userApplyValidationReference.child(userId)
-                .child(magangId)
-                .setValue(usersApplyValidation)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            setResult(REQUEST_POST);
-                            finish();
-                        }else {
-
-                        }
-                    }
-                });
-    }
-
     private void getUserId(){
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
-                .getReference(Constant.USERS_APPLY_VALIDATION_TABLE);
-
-        databaseReference
-                .addValueEventListener(new ValueEventListener() {
+        databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
+        databaseReference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        //Inisialisasi ArrayList
-                        userId = new ArrayList<>();
-
+                        //init user
+                        Users users = new Users();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             //Mapping data pada DataSnapshot ke dalam objek mahasiswa
-                            Magang posting = snapshot.getValue(Magang.class);
 
-                            posting.setKey(snapshot.getKey());
-                            userId.add(posting);
+                            users.setKey(snapshot.getKey());
+                            userId.add(users);
                         }
                     }
                     @Override
@@ -206,12 +177,10 @@ public class MagangPost extends AppCompatActivity {
     }
 
     private void getUserName(FirebaseAuth auth){
-
-        final FirebaseUser currentUser = auth.getCurrentUser();
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+        databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.USERS_TABLE);
 
-        databaseReference.child(currentUser.getUid())
+        databaseReference.child(auth.getUid())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

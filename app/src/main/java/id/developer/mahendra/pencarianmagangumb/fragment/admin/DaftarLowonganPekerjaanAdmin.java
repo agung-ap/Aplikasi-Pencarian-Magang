@@ -78,14 +78,17 @@ public class DaftarLowonganPekerjaanAdmin extends Fragment implements MagangList
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
+                        magangArrayList.clear();
+                        Magang posting = new Magang();
 
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            //Mapping data pada DataSnapshot ke dalam objek mahasiswa
-                            Magang posting = snapshot.getValue(Magang.class);
+                            //Mapping data pada DataSnapshot ke objek posting
+                            posting = snapshot.child("posting_data")
+                                    .getValue(Magang.class);
 
                             posting.setKey(snapshot.getKey());
                             magangArrayList.add(posting);
+
                         }
 
                         if (magangArrayList.size() == 0) {

@@ -24,8 +24,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import id.developer.mahendra.pencarianmagangumb.data.helper.FirebaseHelper;
-import id.developer.mahendra.pencarianmagangumb.data.model.PhotoUsers;
 import id.developer.mahendra.pencarianmagangumb.fragment.admin.DaftarLowonganPekerjaanAdmin;
 import id.developer.mahendra.pencarianmagangumb.fragment.admin.NotificationFragment;
 import id.developer.mahendra.pencarianmagangumb.fragment.admin.ProfilAdmin;
@@ -36,13 +34,12 @@ public class AdminActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
+    private DatabaseReference databaseReference;
 
     private TextView userName;
     private TextView userEmail;
     private ImageView userImage;
 
-    private DatabaseReference reference;
-    private Users users;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,10 +47,8 @@ public class AdminActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        //init firebase
         auth = FirebaseAuth.getInstance();
-        reference = FirebaseDatabase.getInstance().getReference();
-        
         //get current user
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -93,20 +88,24 @@ public class AdminActivity extends AppCompatActivity
     }
 
     private void showUserImageUser(FirebaseAuth auth) {
-        final FirebaseUser currentUser = auth.getCurrentUser();
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_PHOTO_TABLE);
-        databaseReference.child(currentUser.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                PhotoUsers user = dataSnapshot.getValue(PhotoUsers.class);
+        databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
+        databaseReference.child(auth.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String image_url =
+                                dataSnapshot.child("image_url").getValue(String.class);
+                        //load image
+                        Picasso.get().load(image_url)
+                                .placeholder(R.drawable.background_image)
+                                .error(R.drawable.background_image)
+                                .into(userImage);
+                    }
 
-                Picasso.get().load(user.getImageUrl()).into(userImage);
-            }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+                    }
         });
     }
 
@@ -156,22 +155,23 @@ public class AdminActivity extends AppCompatActivity
     }
 
     private void showUserNameAndEmailUser(FirebaseAuth auth){
-        final FirebaseUser currentUser = auth.getCurrentUser();
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
-        databaseReference.child(currentUser.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Users user = dataSnapshot.getValue(Users.class);
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        databaseReference.child(auth.getUid())
+                .child("users_data")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Users user = dataSnapshot.getValue(Users.class);
 
-                userName.setText(user.getNama());
-                userEmail.setText(user.getStatus());
-            }
+                        userName.setText(user.getNama());
+                        userEmail.setText("Status : "  + user.getStatus());
+                    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
+                    }
+                });
     }
 
     @Override

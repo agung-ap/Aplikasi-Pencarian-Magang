@@ -105,10 +105,14 @@ public class ProfilUser extends Fragment {
     }
 
     private void chosePDFFile() {
-        Intent intent = new Intent();
-        intent.setType("application/pdf");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_PDF_REQUEST);
+        try{
+            Intent intent = new Intent();
+            intent.setType("application/pdf");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_PDF_REQUEST);
+        }catch (Exception e){
+            Log.e(TAG, "chose image exception = " + e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -196,7 +200,7 @@ public class ProfilUser extends Fragment {
             Toast.makeText(getActivity(), "berhasil di simpan",
                     Toast.LENGTH_SHORT).show();
 
-        } else if (requestCode == EditProfilUser.REQUEST_BACK) {
+        } else if (requestCode == EditProfilUser.REQUEST_BACK ) {
 
         }
         if (requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK
@@ -211,8 +215,9 @@ public class ProfilUser extends Fragment {
     private void setUploadCv(final Uri filePath){
         if(filePath != null)
         {
-            storageReference = FirebaseStorage.getInstance().getReference();
-            storageReference.child("cv/"+ UUID.randomUUID().toString());
+            storageReference = FirebaseStorage.getInstance()
+                    .getReference()
+                    .child("cv/"+ UUID.randomUUID().toString());
             storageReference.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -223,11 +228,8 @@ public class ProfilUser extends Fragment {
                                 public void onSuccess(Uri uri) {
                                     //hide progress bar
                                     progressDialog.dismiss();
-                                    //show url in log file
-                                    Log.i(TAG, "Pdf url : " + uri.toString());
                                     //uploading to database
                                     createUserCv(auth.getUid(), uri.toString());
-                                    Toast.makeText(getActivity(), "Upload cv berhasil", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -250,15 +252,16 @@ public class ProfilUser extends Fragment {
         }
     }
 
-    public void createUserCv(String inputUid, String user) {
+    public void createUserCv(String inputUid, String cvUrl) {
         //start saving data on firebase realtime database
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_CV_TABLE);
-        databaseReference.child(inputUid).child("cv_url").setValue(user)
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
+        databaseReference.child(inputUid).child("cv_url").setValue(cvUrl)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
                             Log.i(TAG, "Task is Success = " + task.getResult());
+                            Toast.makeText(getActivity(), "Upload cv berhasil", Toast.LENGTH_SHORT).show();
                         }else {
                             Log.e(TAG, "error when uploading cv url = " + task.getException());
                         }

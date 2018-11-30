@@ -133,7 +133,8 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
     }
 
     private void getData(){
-        databaseReference = FirebaseDatabase.getInstance().getReference(Constant.MAGANG_POSTING);
+        databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.MAGANG_POSTING);
         databaseReference
                 .addValueEventListener(new ValueEventListener() {
                     @Override
@@ -142,7 +143,8 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
 
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             //Mapping data pada DataSnapshot ke dalam objek mahasiswa
-                            Magang posting = snapshot.getValue(Magang.class);
+                            Magang posting = snapshot.child("posting_data")
+                                    .getValue(Magang.class);
 
                             posting.setKey(snapshot.getKey());
                             magangArrayList.add(posting);

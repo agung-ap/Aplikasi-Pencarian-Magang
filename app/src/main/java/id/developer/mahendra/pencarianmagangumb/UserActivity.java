@@ -48,7 +48,7 @@ public class UserActivity extends AppCompatActivity
         setContentView(R.layout.activity_user);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        //init firebase
         auth = FirebaseAuth.getInstance();
         //get current user
         authListener = new FirebaseAuth.AuthStateListener() {

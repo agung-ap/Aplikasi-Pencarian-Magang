@@ -111,13 +111,13 @@ public class LoginActivity extends AppCompatActivity {
                                             .child("status").getValue(String.class);
                                     if (status.equals("admin")){
                                         progressDialog.dismiss();
-                                        Toast.makeText(LoginActivity.this, "Login Berhasil", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(LoginActivity.this, "Login Berhasil", Toast.LENGTH_SHORT).show();
 
                                         startActivity(new Intent(LoginActivity.this, AdminActivity.class));
                                         finish();
                                     }else {
                                         progressDialog.dismiss();
-                                        Toast.makeText(LoginActivity.this, "Login Berhasil", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(LoginActivity.this, "Login Berhasil", Toast.LENGTH_SHORT).show();
 
                                         startActivity(new Intent(LoginActivity.this, UserActivity.class));
                                         finish();

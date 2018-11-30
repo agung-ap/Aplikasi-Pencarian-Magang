@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Users implements Parcelable {
+    private String key;
     private String nim;
     private String nama;
     private String telp;
@@ -15,6 +16,37 @@ public class Users implements Parcelable {
     //private String imageUrl;
 
     public Users() {
+    }
+
+    protected Users(Parcel in) {
+        key = in.readString();
+        nim = in.readString();
+        nama = in.readString();
+        telp = in.readString();
+        alamat = in.readString();
+        jurusan = in.readString();
+        deskripsi = in.readString();
+        Status = in.readString();
+    }
+
+    public static final Creator<Users> CREATOR = new Creator<Users>() {
+        @Override
+        public Users createFromParcel(Parcel in) {
+            return new Users(in);
+        }
+
+        @Override
+        public Users[] newArray(int size) {
+            return new Users[size];
+        }
+    };
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String getNim() {
@@ -74,44 +106,20 @@ public class Users implements Parcelable {
     }
 
 
-    public static Creator<Users> getCREATOR() {
-        return CREATOR;
-    }
-
-    protected Users(Parcel in) {
-        nim = in.readString();
-        nama = in.readString();
-        telp = in.readString();
-        alamat = in.readString();
-        jurusan = in.readString();
-        deskripsi = in.readString();
-        Status = in.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(nim);
-        dest.writeString(nama);
-        dest.writeString(alamat);
-        dest.writeString(jurusan);
-        dest.writeString(deskripsi);
-        dest.writeString(Status);
-    }
-
     @Override
     public int describeContents() {
         return 0;
     }
 
-    public static final Creator<Users> CREATOR = new Creator<Users>() {
-        @Override
-        public Users createFromParcel(Parcel in) {
-            return new Users(in);
-        }
-
-        @Override
-        public Users[] newArray(int size) {
-            return new Users[size];
-        }
-    };
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(key);
+        parcel.writeString(nim);
+        parcel.writeString(nama);
+        parcel.writeString(telp);
+        parcel.writeString(alamat);
+        parcel.writeString(jurusan);
+        parcel.writeString(deskripsi);
+        parcel.writeString(Status);
+    }
 }

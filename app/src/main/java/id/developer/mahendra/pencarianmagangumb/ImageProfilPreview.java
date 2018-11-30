@@ -7,6 +7,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -33,6 +34,8 @@ import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 
 public class ImageProfilPreview extends AppCompatActivity {
+    private static final String TAG = ImageProfilPreview.class.getSimpleName();
+
     private Uri filePath;
     @BindView(R.id.image_preview)
     ImageView imagePreview;
@@ -40,21 +43,28 @@ public class ImageProfilPreview extends AppCompatActivity {
     Button uploadPhoto;
 
     public static final int UPLOADED= 21;
-    //Firebase
+
     private FirebaseAuth auth;
     private StorageReference storageReference;
+    private DatabaseReference databaseReference;
+
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_profil_preview);
         ButterKnife.bind(this);
-
+        //init firebase
         auth = FirebaseAuth.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReference();
-
+        //set title in action bar
+        getSupportActionBar().setTitle("Image Preview");
+        //get image uri
         String uri = getIntent().getStringExtra("URI");
-        //Toast.makeText(this, "uri " + uri, Toast.LENGTH_SHORT).show();
+        Log.i(TAG, "get uri = " + uri);
+        //init progress dialog
+        progressDialog = new ProgressDialog(this);
+
         filePath = Uri.parse(uri);
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
@@ -77,28 +87,22 @@ public class ImageProfilPreview extends AppCompatActivity {
     private void uploadImage(final Uri filePath){
         if(filePath != null)
         {
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading...");
+            progressDialog.setMessage("Uploading...");
             progressDialog.show();
 
-            final StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
-            ref.putFile(filePath)
+            storageReference = FirebaseStorage.getInstance()
+                    .getReference()
+                    .child("images/"+ UUID.randomUUID().toString());
+            storageReference.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                            //Toast.makeText(ImageProfilPreview.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            //set image url to users database
+                            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     progressDialog.dismiss();
-
-                                    PhotoUsers user = new PhotoUsers();
-                                    user.setImageUrl(uri.toString());
-
-                                    createUser(auth.getUid(), user);
-
-
+                                    createUser(auth.getUid(), uri.toString());
                                 }
                             });
                         }
@@ -120,11 +124,11 @@ public class ImageProfilPreview extends AppCompatActivity {
                     });
         }
     }
-    public void createUser(String inputUid,PhotoUsers user) {
+    public void createUser(String uid, String uri) {
         //start saving data on firebase realtime database
 
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_PHOTO_TABLE);
-        databaseReference.child(inputUid).setValue(user)
+        databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
+        databaseReference.child(uid).child("image_url").setValue(uri)
         .addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {

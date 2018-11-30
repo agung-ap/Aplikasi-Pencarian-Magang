@@ -1,16 +1,16 @@
 package id.developer.mahendra.pencarianmagangumb.data.model;
 
 public class UsersApplyValidation {
-    private boolean isApply;
+    private String isApply;
 
     public UsersApplyValidation() {
     }
 
-    public boolean isApply() {
+    public String isApply() {
         return isApply;
     }
 
-    public void setApply(boolean apply) {
+    public void setApply(String apply) {
         isApply = apply;
     }
 }

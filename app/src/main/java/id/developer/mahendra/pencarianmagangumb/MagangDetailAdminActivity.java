@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,6 +42,7 @@ public class MagangDetailAdminActivity extends AppCompatActivity {
 
     private ArrayList<Magang> magangData;
     private FirebaseAuth auth;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,6 @@ public class MagangDetailAdminActivity extends AppCompatActivity {
 
         if (savedInstanceState == null){
             Bundle getBundle = getIntent().getExtras();
-
             //get data from intent
             magangData = new ArrayList<>();
             magangData = getBundle
@@ -63,10 +64,7 @@ public class MagangDetailAdminActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle(magangData.get(0).getTitle());
         showMagangDetail();
-
     }
-
-
 
     private void showMagangDetail(){
         titleDetail.setText(magangData.get(0).getTitle());
@@ -96,49 +94,24 @@ public class MagangDetailAdminActivity extends AppCompatActivity {
                 startActivityForResult(intent, MagangPost.REQUEST_EDIT);
                 break;
             case R.id.delete_magang_posting:
-                //deleteMagangPost();
+                deleteMagangPost();
                 break;
             case android.R.id.home:
                 finish();
                 break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     private void deleteMagangPost(){
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+        databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.MAGANG_POSTING)
                 .child(magangData.get(0).getKey());
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                dataSnapshot.getRef().removeValue();
-                deleteUsersApplyValidation(auth);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void deleteUsersApplyValidation(FirebaseAuth auth) {
-        final DatabaseReference userApplyValidationReference = FirebaseDatabase.getInstance()
-                .getReference(Constant.USERS_APPLY_VALIDATION_TABLE)
-                .child(auth.getUid())
-                .child(magangData.get(0).getKey());
-
-        userApplyValidationReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                dataSnapshot.getRef().removeValue();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(MagangDetailAdminActivity.this, "Data berhasil di hapus", Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
 

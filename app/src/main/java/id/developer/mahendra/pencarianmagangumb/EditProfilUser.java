@@ -35,6 +35,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -71,11 +72,9 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
     Button save;
 
     private FirebaseAuth auth;
-    private StorageReference storageReference;
-    private String departmentSelected;
-    private Uri imageFilePath;
-    private Users userImageUrl;
+    private DatabaseReference databaseReference;
 
+    private String departmentSelected;
     public static final int REQUEST_ADD = 20;
     public static final int REQUEST_BACK = 30;
     private static final int PICK_IMAGE_REQUEST = 71;
@@ -87,17 +86,23 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profil_user);
         ButterKnife.bind(this);
-
+        //set title in action bar
         getSupportActionBar().setTitle("Edit Profil");
+        //add home button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        //init firebase
         auth = FirebaseAuth.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReference();
+        //show user data
         getUserData(auth);
 
         department.setOnItemSelectedListener(this);
+        // Spinner Drop down elements
+        ArrayList<String> jurusan = new ArrayList<String>();
+        jurusan.add("NONE");
+        jurusan.add("Teknik Informatika");
+        jurusan.add("Sistem Informasi");
         //set data to spinner
-        spinnerSetup();
+        spinnerSetup(jurusan);
         imagePreviewUser.setClickable(true);
         imagePreviewUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,18 +121,17 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
     }
 
     private void chooseImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+        try{
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+        }catch (Exception e){
+            Log.e(TAG, "chose image exception = " + e.getLocalizedMessage());
+        }
     }
 
-    private void spinnerSetup(){
-        // Spinner Drop down elements
-        List<String> jurusan = new ArrayList<String>();
-        jurusan.add("NONE");
-        jurusan.add("Teknik Informatika");
-        jurusan.add("Sistem Informasi");
+    private void spinnerSetup(ArrayList<String > jurusan){
         // Creating adapter for spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, jurusan);
@@ -171,23 +175,18 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
     }
 
     private void getUserData(FirebaseAuth auth){
-        final FirebaseUser currentUser = auth.getCurrentUser();
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
-
-        databaseReference.child(currentUser.getUid())
+        databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
+        databaseReference.child(auth.getUid()).child("users_data")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Users user = dataSnapshot.getValue(Users.class);
-
-                        //Picasso.get().load(user.getImageURl()).into(imagePreviewUser);
-
+                        //show user data from database
                         name.setText(user.getNama());
                         nim.setText(user.getNim());
                         phone.setText(user.getTelp());
                         address.setText(user.getAlamat());
                         expertise.setText(user.getDeskripsi());
-                        department.setTextDirection(1);
                     }
 
                     @Override
@@ -196,15 +195,15 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
                     }
                 });
 
-        final DatabaseReference databaseImageReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_PHOTO_TABLE);
-
-        databaseImageReference.child(currentUser.getUid())
+        databaseReference.child(auth.getUid())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        PhotoUsers user = dataSnapshot.getValue(PhotoUsers.class);
-                        Picasso.get().load(user.getImageUrl())
+                        String imageUrl = dataSnapshot.child("image_url").getValue(String.class);
+                        //show image if any from database
+                        Picasso.get().load(imageUrl)
                                 .placeholder(R.drawable.background_image)
+                                .error(R.drawable.background_image)
                                 .into(imagePreviewUser);
                     }
                     @Override
@@ -215,14 +214,14 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
     }
 
     private void setUserData(FirebaseAuth auth, Users user){
-        final FirebaseUser currentUser = auth.getCurrentUser();
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
-        databaseReference.child(currentUser.getUid()).setValue(user)
+        databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
+        databaseReference.child(auth.getUid())
+                .child("users_data")
+                .setValue(user)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
-                            setEmailPassword(currentUser, email, password);
                             setResult(REQUEST_ADD);
                             finish();
                         }else {
@@ -230,8 +229,6 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
                         }
                     }
                 });
-
-
     }
 
     private void setEmailPassword(FirebaseUser currentUser, EditText email, EditText password) {
@@ -293,17 +290,16 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_IMAGE_REQUEST){
-            if (data.getData() != null) {
-                Intent intent = new Intent(EditProfilUser.this, ImageProfilPreview.class);
-                intent.putExtra("URI", data.getData().toString());
-                startActivityForResult(intent, ImageProfilPreview.UPLOADED);
-            }else {
-                Toast.makeText(EditProfilUser.this, "URI is null", Toast.LENGTH_SHORT).show();
-            }
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null ){
+
+            Log.i(TAG, "uri = " + data.getData().toString());
+            Intent intent = new Intent(EditProfilUser.this, ImageProfilPreview.class);
+            intent.putExtra("URI", data.getData().toString());
+            startActivityForResult(intent, ImageProfilPreview.UPLOADED);
         }
 
-        if (requestCode == ImageProfilPreview.UPLOADED){
+        if (requestCode == ImageProfilPreview.UPLOADED && resultCode == RESULT_OK){
             Toast.makeText(EditProfilUser.this, "berhasil diupload",
                     Toast.LENGTH_SHORT).show();
         }

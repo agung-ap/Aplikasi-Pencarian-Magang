@@ -23,7 +23,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.AbstractQueue;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -53,16 +52,18 @@ public class MagangDetailUserActivity extends AppCompatActivity {
     private ArrayList<Magang> magangData;
     private String username;
     private FirebaseAuth auth;
+    private DatabaseReference databaseReference;
+
+    private int applyCount;
 
     private final static String TAG = MagangDetailUserActivity.class.getSimpleName();
-    private ArrayList<Magang> magangArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_magang_detail_user);
         ButterKnife.bind(this);
-
+        //display homebutton
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //init firebase auth
         auth = FirebaseAuth.getInstance();
@@ -70,17 +71,15 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         //preference = new StorePreference(this);
         if (savedInstanceState == null){
             Bundle getBundle = getIntent().getExtras();
-
             //get data from intent
             magangData = new ArrayList<>();
             magangData = getBundle
                     .getParcelableArrayList(getString(R.string.GET_SELECTED_ITEM));
         }
-
-        //show progress bar
-        isApplyValidation.setVisibility(View.VISIBLE);
-        apply.setVisibility(View.GONE);
+        //get user validation
         getUserValidationData(auth);
+        //check if applyCount has 30
+        getApplyCount();
         //set action bar title
         getSupportActionBar().setTitle(magangData.get(0).getTitle());
         //show magang detail
@@ -93,6 +92,62 @@ public class MagangDetailUserActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void setApplyCount() {
+        databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.MAGANG_POSTING);
+        //save database reference for increment applyCount
+        final DatabaseReference counterRef = databaseReference
+                .child(magangData.get(0).getKey()).child("users_apply");
+        //get applyCount value
+        databaseReference.child(magangData.get(0).getKey())
+                .child("users_apply").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long count = (long) dataSnapshot.child("applyCount").getValue();
+                //increment apply count in post magang database
+                counterRef.child("applyCount").setValue(++count);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void getApplyCount(){
+        databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.MAGANG_POSTING);
+        //get applyCount value
+        databaseReference.child(magangData.get(0).getKey())
+                .child("users_apply").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long count = (long) dataSnapshot.child("applyCount").getValue();
+                if (count >= 30){
+                    isApplyValidation.setVisibility(View.GONE);
+                    apply.setVisibility(View.VISIBLE);
+                    apply.setClickable(false);
+                    apply.setBackground(null);
+                    apply.setTextColor(Color.parseColor("#FF4C62"));
+                    apply.setText(R.string.applyCount);
+                }else {
+                    isApplyValidation.setVisibility(View.GONE);
+                    apply.setVisibility(View.VISIBLE);
+                    apply.setClickable(true);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override
@@ -124,16 +179,10 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         return apply;
     }
 
-    private UsersApplyValidation applyValidationData(){
-        UsersApplyValidation validation = new UsersApplyValidation();
-        validation.setApply(true);
-        return validation;
-    }
-
-    private void setApply(FirebaseAuth auth, UsersApply usersApply,
-                          UsersApplyValidation usersApplyValidation){
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+    private void setApply(FirebaseAuth auth, UsersApply usersApply){
+        databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.USERS_APPLY_TABLE);
+
         databaseReference.child(databaseReference.push().getKey()).setValue(usersApply)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -145,12 +194,16 @@ public class MagangDetailUserActivity extends AppCompatActivity {
                         }
                     }
                 });
+        //set users apply validation
+        UsersApplyValidation validation = new UsersApplyValidation();
+        validation.setApply(magangData.get(0).getKey());
 
-        final DatabaseReference userApplyValidationReference = FirebaseDatabase.getInstance()
-                .getReference(Constant.USERS_APPLY_VALIDATION_TABLE);
-        userApplyValidationReference.child(auth.getUid())
-                .child(magangData.get(0).getKey())
-                .setValue(usersApplyValidation)
+        databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.USERS_TABLE);
+        databaseReference.child(auth.getUid())
+                .child("magang_apply")
+                .child(databaseReference.push().getKey())
+                .setValue(validation)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -161,6 +214,8 @@ public class MagangDetailUserActivity extends AppCompatActivity {
                         }
                     }
                 });
+        //increment apply count every users apply
+        setApplyCount();
     }
 
     private void showDialogApply(final View view){
@@ -171,7 +226,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                setApply(auth, data(), applyValidationData());
+                setApply(auth, data());
                 Toast.makeText(MagangDetailUserActivity.this, "Apply Berhasil", Toast.LENGTH_SHORT).show();
                 //preference.setFirstRun(false);
             }
@@ -189,21 +244,30 @@ public class MagangDetailUserActivity extends AppCompatActivity {
     }
 
     private void getUserValidationData(final FirebaseAuth auth){
-        final FirebaseUser currentUser = auth.getCurrentUser();
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
-                .getReference(Constant.USERS_APPLY_VALIDATION_TABLE);
-
-        databaseReference.child(currentUser.getUid())
-                //.child(magangData.get(0).getKey())
+                .getReference(Constant.USERS_TABLE);
+        //matching post id and isApply
+        databaseReference.child(auth.getUid())
+                .child("magang_apply")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        //initialisation array list for save list of users apply
+                        ArrayList<UsersApplyValidation> getValidation = new ArrayList<>();
+                        //looping us
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            UsersApplyValidation data = snapshot.getValue(UsersApplyValidation.class);
 
-                            if (magangData.get(0).getKey() != null){
-                                userValidation(auth, magangData.get(0).getKey());
-                            }else {
-                                apply.setVisibility(View.VISIBLE);
-                            }
+                            getValidation.add(data);
+                        }
+
+                        if (getValidation.size() != 0){
+                            userValidation(getValidation);
+                        }else {
+                            isApplyValidation.setVisibility(View.GONE);
+                            apply.setVisibility(View.VISIBLE);
+                            apply.setClickable(true);
+                        }
 
                     }
 
@@ -213,38 +277,24 @@ public class MagangDetailUserActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    private void userValidation(FirebaseAuth auth, String postingId){
-        final FirebaseUser currentUser = auth.getCurrentUser();
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
-                .getReference(Constant.USERS_APPLY_VALIDATION_TABLE);
-
-        databaseReference.child(currentUser.getUid())
-                .child(postingId)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        UsersApplyValidation validation = dataSnapshot.getValue(UsersApplyValidation.class);
-
-                        if (validation.isApply()){
-                            isApplyValidation.setVisibility(View.GONE);
-                            apply.setVisibility(View.VISIBLE);
-                            apply.setClickable(false);
-                            apply.setBackground(null);
-                            apply.setTextColor(Color.parseColor("#FF4C62C6"));
-                            apply.setText(R.string.isApply);
-                        }else {
-                            isApplyValidation.setVisibility(View.GONE);
-                            apply.setVisibility(View.VISIBLE);
-                            apply.setClickable(true);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+    //set user validation
+    private void userValidation(ArrayList<UsersApplyValidation> getValidation){
+        for (int i = 0; i < getValidation.size(); i++){
+            if (getValidation.get(i).isApply()
+                    .equals(magangData.get(0).getKey())){
+                isApplyValidation.setVisibility(View.GONE);
+                apply.setVisibility(View.VISIBLE);
+                apply.setClickable(false);
+                apply.setBackground(null);
+                apply.setTextColor(Color.parseColor("#FF4C62C6"));
+                apply.setText(R.string.isApply);
+            }else if (getValidation.get(i).isApply()
+                    .equals("false")){
+                isApplyValidation.setVisibility(View.GONE);
+                apply.setVisibility(View.VISIBLE);
+                apply.setClickable(true);
+            }
+        }
     }
 
     private void getUserName(FirebaseAuth auth){
@@ -270,7 +320,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        getUserValidationData(auth);
+        //getUserValidationData(auth);
     }
 
     @Override
