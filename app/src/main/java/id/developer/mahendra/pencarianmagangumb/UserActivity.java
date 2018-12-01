@@ -25,7 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import id.developer.mahendra.pencarianmagangumb.fragment.user.DaftarLowonganPekerjaan;
-import id.developer.mahendra.pencarianmagangumb.fragment.user.ProfilUser;
+import id.developer.mahendra.pencarianmagangumb.fragment.user.ProfilUserFragment;
 import id.developer.mahendra.pencarianmagangumb.model.Users;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
@@ -142,7 +142,7 @@ public class UserActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.fragment_layout_user, fragment);
             fragmentTransaction.commit();
         } else if (id == R.id.profile) {
-            ProfilUser fragment = new ProfilUser();
+            ProfilUserFragment fragment = new ProfilUserFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_layout_user, fragment);
             fragmentTransaction.commit();

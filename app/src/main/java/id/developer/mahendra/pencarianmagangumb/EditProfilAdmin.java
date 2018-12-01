@@ -86,7 +86,6 @@ public class EditProfilAdmin extends AppCompatActivity {
 
             }
         });
-
     }
 
     private void chooseImage() {

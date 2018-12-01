@@ -1,24 +1,12 @@
 package id.developer.mahendra.pencarianmagangumb.util;
 
-import android.Manifest;
-import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.itextpdf.text.Document;
@@ -26,7 +14,6 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfBody;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -37,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import id.developer.mahendra.pencarianmagangumb.model.UsersApply;
 
@@ -59,13 +47,13 @@ public class PdfPrint {
             Log.i(TAG, "Created a new directory for PDF");
         }
 
-        pdfFile = new File(docsFolder.getAbsolutePath(),"HelloWorld.pdf");
+        pdfFile = new File(docsFolder.getAbsolutePath(),"Apply_Report.pdf" + UUID.randomUUID().toString());
         OutputStream output = new FileOutputStream(pdfFile);
         Document document = new Document();
         PdfWriter.getInstance(document, output);
         document.open();
         //title
-        document.add(new Paragraph("Data Report Kerja Praktek\n\n"));
+        document.add(new Paragraph("Report Data Kerja Praktek\n\n"));
         //table
         PdfPTable table = new PdfPTable(2);
         for (int i = 0; i < getApplyData.size(); i++){
@@ -109,7 +97,7 @@ public class PdfPrint {
 
             context.startActivity(intent);
         }else{
-            Toast.makeText(context,"Download a PDF Viewer to see the generated PDF",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"Silahkan Download PDF Viewer untuk melihat report",Toast.LENGTH_SHORT).show();
         }
     }
 }

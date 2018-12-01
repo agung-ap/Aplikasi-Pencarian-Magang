@@ -16,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,11 +29,10 @@ import id.developer.mahendra.pencarianmagangumb.AdminActivity;
 import id.developer.mahendra.pencarianmagangumb.EditProfilAdmin;
 import id.developer.mahendra.pencarianmagangumb.EditProfilUser;
 import id.developer.mahendra.pencarianmagangumb.R;
-import id.developer.mahendra.pencarianmagangumb.model.PhotoUsers;
 import id.developer.mahendra.pencarianmagangumb.model.Users;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
-public class ProfilAdmin extends Fragment {
+public class ProfilAdminFragment extends Fragment {
     @BindView(R.id.admin_profil_image)
     ImageView adminImage;
     @BindView(R.id.admin_profil_name)
@@ -49,6 +47,7 @@ public class ProfilAdmin extends Fragment {
     TextView adminAddress;
 
     private FirebaseAuth auth;
+    private DatabaseReference databaseReference;
 
     @Nullable
     @Override
@@ -65,12 +64,10 @@ public class ProfilAdmin extends Fragment {
         return view;
     }
 
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.profil, menu);
-
     }
 
     @Override
@@ -90,11 +87,10 @@ public class ProfilAdmin extends Fragment {
     }
 
     private void getAdminProfil(FirebaseAuth auth){
-        final FirebaseUser currentUser = auth.getCurrentUser();
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+        databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.USERS_TABLE);
 
-        databaseReference.child(currentUser.getUid())
+        databaseReference.child(auth.getUid()).child("users_data")
                 .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -112,17 +108,19 @@ public class ProfilAdmin extends Fragment {
             }
         });
 
-        final DatabaseReference databaseImageReference = FirebaseDatabase.getInstance()
-                .getReference(Constant.USERS_PHOTO_TABLE);
-
-        databaseImageReference.child(currentUser.getUid())
+        databaseReference.child(auth.getUid())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        PhotoUsers user = dataSnapshot.getValue(PhotoUsers.class);
+                        String email = dataSnapshot.child("email").getValue(String.class);
+                        String imageUrl = dataSnapshot.child("image_url").getValue(String.class);
+                        //show email
+                        adminEmail.setText(email);
+                        //load image
                         Picasso.get()
-                                .load(user.getImageUrl())
+                                .load(imageUrl)
                                 .placeholder(R.drawable.background_image)
+                                .error(R.drawable.background_image)
                                 .into(adminImage);
                     }
 

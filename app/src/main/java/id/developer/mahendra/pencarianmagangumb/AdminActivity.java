@@ -26,7 +26,7 @@ import com.squareup.picasso.Picasso;
 
 import id.developer.mahendra.pencarianmagangumb.fragment.admin.DaftarLowonganPekerjaanAdmin;
 import id.developer.mahendra.pencarianmagangumb.fragment.admin.NotificationFragment;
-import id.developer.mahendra.pencarianmagangumb.fragment.admin.ProfilAdmin;
+import id.developer.mahendra.pencarianmagangumb.fragment.admin.ProfilAdminFragment;
 import id.developer.mahendra.pencarianmagangumb.model.Users;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
@@ -135,7 +135,7 @@ public class AdminActivity extends AppCompatActivity
             fragmentTransaction.commit();
 
         } else if (id == R.id.profile_admin) {
-            ProfilAdmin fragment = new ProfilAdmin();
+            ProfilAdminFragment fragment = new ProfilAdminFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_layout_admin, fragment);
             fragmentTransaction.commit();

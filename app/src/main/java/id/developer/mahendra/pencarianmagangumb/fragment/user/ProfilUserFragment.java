@@ -47,9 +47,9 @@ import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 import static android.app.Activity.RESULT_OK;
 
-public class ProfilUser extends Fragment {
+public class ProfilUserFragment extends Fragment {
     private static final int PICK_PDF_REQUEST = 70;
-    private static final String TAG = ProfilUser.class.getSimpleName();
+    private static final String TAG = ProfilUserFragment.class.getSimpleName();
     @BindView(R.id.user_profil_image)
     ImageView userImage;
     @BindView(R.id.user_profil_name)
