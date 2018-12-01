@@ -43,6 +43,8 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc1'
     //library untuk baca file PDF
     implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+    //library untuk tulis pdf
+    implementation 'com.itextpdf:itextg:5.5.10'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
