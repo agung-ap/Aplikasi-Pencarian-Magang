@@ -11,9 +11,11 @@ public class Magang implements Parcelable {
     private String salary;
     private String requirement;
     private String postedName;
+    private long applyQuota;
 
     public Magang() {
     }
+
 
     protected Magang(Parcel in) {
         key = in.readString();
@@ -23,6 +25,7 @@ public class Magang implements Parcelable {
         salary = in.readString();
         requirement = in.readString();
         postedName = in.readString();
+        applyQuota = in.readLong();
     }
 
     public static final Creator<Magang> CREATOR = new Creator<Magang>() {
@@ -37,20 +40,29 @@ public class Magang implements Parcelable {
         }
     };
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(key);
+        parcel.writeString(title);
+        parcel.writeString(companyName);
+        parcel.writeString(city);
+        parcel.writeString(salary);
+        parcel.writeString(requirement);
+        parcel.writeString(postedName);
+        parcel.writeLong(applyQuota);
+    }
+
     public String getKey() {
         return key;
     }
 
     public void setKey(String key) {
         this.key = key;
-    }
-
-    public String getPostedName() {
-        return postedName;
-    }
-
-    public void setPostedName(String postedName) {
-        this.postedName = postedName;
     }
 
     public String getTitle() {
@@ -93,19 +105,23 @@ public class Magang implements Parcelable {
         this.requirement = requirement;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getPostedName() {
+        return postedName;
     }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(key);
-        parcel.writeString(title);
-        parcel.writeString(companyName);
-        parcel.writeString(city);
-        parcel.writeString(salary);
-        parcel.writeString(requirement);
-        parcel.writeString(postedName);
+    public void setPostedName(String postedName) {
+        this.postedName = postedName;
+    }
+
+    public long getApplyQuota() {
+        return applyQuota;
+    }
+
+    public void setApplyQuota(long applyQuota) {
+        this.applyQuota = applyQuota;
+    }
+
+    public static Creator<Magang> getCREATOR() {
+        return CREATOR;
     }
 }

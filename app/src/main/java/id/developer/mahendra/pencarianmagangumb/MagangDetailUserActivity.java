@@ -54,8 +54,6 @@ public class MagangDetailUserActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private DatabaseReference databaseReference;
 
-    private int applyCount;
-
     private final static String TAG = MagangDetailUserActivity.class.getSimpleName();
 
     @Override
@@ -127,12 +125,12 @@ public class MagangDetailUserActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long count = (long) dataSnapshot.child("applyCount").getValue();
-                if (count >= 30){
+                if (count >= magangData.get(0).getApplyQuota()){
                     isApplyValidation.setVisibility(View.GONE);
                     apply.setVisibility(View.VISIBLE);
                     apply.setClickable(false);
                     apply.setBackground(null);
-                    apply.setTextColor(Color.parseColor("#FF4C62"));
+                    apply.setTextColor(getResources().getColor(R.color.button_color));
                     apply.setText(R.string.applyCount);
                 }else {
                     isApplyValidation.setVisibility(View.GONE);
