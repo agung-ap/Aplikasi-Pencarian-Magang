@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.EventListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -242,13 +243,17 @@ public class MagangDetailUserActivity extends AppCompatActivity {
                             //input value to array list
                             getValidation.add(data);
                         }
-                        //check is arraylist getvalidation is 0 or not
-                        if (getValidation.size() != 0){
+                        //check is arraylist getvalidation is not 0 and not more than 3
+                        if (getValidation.size() != 0 && getValidation.size() < 3){
                             userValidation(getValidation);
-                        }else {
+
+                        }else if (getValidation.size() >= 2){
                             isApplyValidation.setVisibility(View.GONE);
                             apply.setVisibility(View.VISIBLE);
-                            apply.setClickable(true);
+                            apply.setClickable(false);
+                            apply.setBackground(null);
+                            apply.setTextColor(getResources().getColor(R.color.button_color));
+                            apply.setText("melampau batas maksimal apply");
                         }
                     }
 
@@ -267,7 +272,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
                 apply.setVisibility(View.VISIBLE);
                 apply.setClickable(false);
                 apply.setBackground(null);
-                apply.setTextColor(Color.parseColor("#FF4C62C6"));
+                apply.setTextColor(getResources().getColor(R.color.button_color));
                 apply.setText(R.string.isApply);
             }else if (getValidation.get(i).isApply()
                     .equals("false")){
@@ -279,11 +284,10 @@ public class MagangDetailUserActivity extends AppCompatActivity {
     }
 
     private void getUserName(FirebaseAuth auth){
-        final FirebaseUser currentUser = auth.getCurrentUser();
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+        databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.USERS_TABLE);
 
-        databaseReference.child(currentUser.getUid()).child("users_data")
+        databaseReference.child(auth.getUid()).child("users_data")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -302,7 +306,13 @@ public class MagangDetailUserActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //getUserValidationData(auth);
+        getUserValidationData(auth);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUserValidationData(auth);
     }
 
     @Override
