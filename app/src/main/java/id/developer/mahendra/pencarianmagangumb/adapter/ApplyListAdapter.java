@@ -38,6 +38,7 @@ public class ApplyListAdapter extends RecyclerView.Adapter<ApplyListAdapter.View
         holder.userName.setText(usersApplyList.get(i).getUserName());
         holder.titleJob.setText("Jobs : " + usersApplyList.get(i).getTitle());
         holder.companyJob.setText("Company : " + usersApplyList.get(i).getCompany());
+        holder.userNim.setText("Nim : " + usersApplyList.get(i).getUserNim());
     }
 
     @Override
@@ -55,6 +56,8 @@ public class ApplyListAdapter extends RecyclerView.Adapter<ApplyListAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.nama_user_apply)
         TextView userName;
+        @BindView(R.id.nim_user_apply)
+        TextView userNim;
         @BindView(R.id.title_apply)
         TextView titleJob;
         @BindView(R.id.company_name_apply)

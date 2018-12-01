@@ -20,6 +20,18 @@
         android:textStyle="bold"
         android:text="Agung Nur Aprianto"/>
 
+
+    <TextView
+        android:id="@+id/nim_user_apply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:textSize="16sp"
+        style="@style/TextAppearance.AppCompat.Display1"
+        android:textStyle="bold"
+        android:text="Nim : Android Developer"/>
+
     <TextView
         android:id="@+id/title_apply"
         android:layout_width="match_parent"

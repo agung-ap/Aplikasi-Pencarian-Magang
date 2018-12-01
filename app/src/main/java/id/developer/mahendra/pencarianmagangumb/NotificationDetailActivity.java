@@ -44,6 +44,8 @@ public class NotificationDetailActivity extends AppCompatActivity {
     private ArrayList<UsersApply> usersApplyList;
     private String magangPostId, userId , emailUser;
 
+    private DatabaseReference databaseReference;
+
     @BindView(R.id.toolbarImage)
     ImageView toolImage;
     @BindView(R.id.toolbar)
@@ -140,17 +142,18 @@ public class NotificationDetailActivity extends AppCompatActivity {
     }
 
     private void getUserImage(String userId){
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
-                .getReference(Constant.USERS_PHOTO_TABLE);
+        databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.USERS_TABLE);
 
-        databaseReference.child(userId)
+        databaseReference.child(userId).child("image_url")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        PhotoUsers photoUsers = dataSnapshot.getValue(PhotoUsers.class);
+                        String imageUrl = dataSnapshot.getValue(String.class);
 
-                        Picasso.get().load(photoUsers.getImageUrl())
+                        Picasso.get().load(imageUrl)
                                 .placeholder(R.drawable.background_image)
+                                .error(R.drawable.background_image)
                                 .into(toolImage);
                     }
 
@@ -162,23 +165,23 @@ public class NotificationDetailActivity extends AppCompatActivity {
     }
 
     private void getUserCv(String userId){
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
-                .getReference(Constant.USERS_CV_TABLE);
+        databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.USERS_TABLE);
 
-        databaseReference.child(userId)
+        databaseReference.child(userId).child("cv_url")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        final CvUsers cvUsers = dataSnapshot.getValue(CvUsers.class);
+                        final String cvUrl = dataSnapshot.getValue(String.class);
 
                         userCv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 Intent intent = new Intent(NotificationDetailActivity.this, ViewUserCv.class);
-                                intent.putExtra("cv", cvUsers.getCvUrl());
+                                intent.putExtra("cv", cvUrl);
                                 //startActivity(intent);
                                 Toast.makeText(NotificationDetailActivity.this,
-                                        "User Cv " + cvUsers.getCvUrl(), Toast.LENGTH_SHORT).show();
+                                        "User Cv " + cvUrl, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -191,10 +194,10 @@ public class NotificationDetailActivity extends AppCompatActivity {
     }
 
     private void getUserData(final String userId){
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+        databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.USERS_TABLE);
 
-        databaseReference.child(userId)
+        databaseReference.child(userId).child("users_data")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -205,7 +208,6 @@ public class NotificationDetailActivity extends AppCompatActivity {
                         userPhone.setText(users.getTelp());
                         userDepartment.setText(users.getJurusan());
                         userExpertise.setText(users.getDeskripsi());
-
                     }
 
                     @Override
@@ -216,10 +218,11 @@ public class NotificationDetailActivity extends AppCompatActivity {
     }
 
     private void getCompanyData(String magangPostId){
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+        databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.MAGANG_POSTING);
 
         databaseReference.child(magangPostId)
+                .child("posting_data")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -265,7 +268,6 @@ public class NotificationDetailActivity extends AppCompatActivity {
                 // User cancelled the dialog
             }
         });
-
         //show alert dialog
         AlertDialog dialog = builder.create();
         dialog.show();
