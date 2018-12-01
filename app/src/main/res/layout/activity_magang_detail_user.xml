@@ -60,6 +60,15 @@
                 style="@style/Base.TextAppearance.AppCompat.Headline"
                 android:text="Salary"/>
 
+            <TextView
+                android:id="@+id/apply_quota_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:textSize="14sp"
+                android:text="Jumlah pendaftar saat ini : 30"/>
+
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

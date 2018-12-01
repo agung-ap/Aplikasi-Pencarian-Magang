@@ -34,6 +34,8 @@ public class MagangPost extends AppCompatActivity {
     EditText applyQuota;
     @BindView(R.id.company_name_post)
     EditText companyName;
+    @BindView(R.id.company_email_post)
+    EditText companyEmail;
     @BindView(R.id.city_post)
     EditText city;
     @BindView(R.id.salary_post)
@@ -98,10 +100,12 @@ public class MagangPost extends AppCompatActivity {
     private Magang data(){
         String inputTitle = title.getText().toString().trim();
         String inputCompanyName = companyName.getText().toString().trim();
+        String inputCompanyEmail = companyEmail.getText().toString().trim();
         String inputCity = city.getText().toString().trim();
         String inputSalary = salary.getText().toString().trim();
         String inputRequirement = requirement.getText().toString().trim();
         String inputApplyQuota = applyQuota.getText().toString().trim();
+
 
         Magang posting = new Magang();
         posting.setTitle(inputTitle);
@@ -111,6 +115,7 @@ public class MagangPost extends AppCompatActivity {
         posting.setRequirement(inputRequirement);
         posting.setApplyQuota(Long.parseLong(inputApplyQuota));
         posting.setPostedName(userName);
+        posting.setCompanyEmail(inputCompanyEmail);
 
         return posting;
     }
@@ -211,6 +216,7 @@ public class MagangPost extends AppCompatActivity {
         salary.setText(magangData.get(0).getSalary());
         requirement.setText(magangData.get(0).getRequirement());
         applyQuota.setText(String.valueOf(magangData.get(0).getApplyQuota()));
+        companyEmail.setText(magangData.get(0).getCompanyEmail());
     }
 
 }

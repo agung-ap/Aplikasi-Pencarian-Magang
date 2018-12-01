@@ -45,6 +45,8 @@ public class MagangDetailUserActivity extends AppCompatActivity {
     TextView cityDetail;
     @BindView(R.id.salary_detail)
     TextView salaryDetail;
+    @BindView(R.id.apply_quota_detail)
+    TextView applyQuotaDetail;
     @BindView(R.id.requirement_detail)
     TextView requirementDetail;
     @BindView(R.id.isApply_validation)
@@ -81,9 +83,11 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         getApplyCount();
         //set action bar title
         getSupportActionBar().setTitle(magangData.get(0).getTitle());
+        //show amount of users apply for this posting
+        showUsersAmount();
         //show magang detail
         showMagangDetail();
-
+        //apply this posting
         apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,7 +96,24 @@ public class MagangDetailUserActivity extends AppCompatActivity {
             }
         });
     }
+    //get users amount for this posting
+    private void showUsersAmount() {
+        databaseReference = FirebaseDatabase.getInstance().getReference(Constant.MAGANG_POSTING);
+        databaseReference.child(magangData.get(0).getKey())
+                .child("users_apply").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long count = (long) dataSnapshot.child("applyCount").getValue();
+                applyQuotaDetail.setText("jumlah pendaftar saat ini : " + count);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    //method for increment applycount every users click apply button
     private void setApplyCount() {
         databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.MAGANG_POSTING);
@@ -107,6 +128,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
                 long count = (long) dataSnapshot.child("applyCount").getValue();
                 //increment apply count in post magang database
                 counterRef.child("applyCount").setValue(++count);
+                finish();
             }
 
             @Override
@@ -161,6 +183,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         companyNameDetail.setText(magangData.get(0).getCompanyName());
         cityDetail.setText(magangData.get(0).getCity());
         salaryDetail.setText("Salary : " + magangData.get(0).getSalary());
+        applyQuotaDetail.setText("jumlah pendaftar saat ini : " + magangData.get(0).getApplyQuota());
         requirementDetail.setText(magangData.get(0).getRequirement());
     }
 
@@ -213,6 +236,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 setApply(auth, data());
                 Toast.makeText(MagangDetailUserActivity.this, "Apply Berhasil", Toast.LENGTH_SHORT).show();
+
                 //preference.setFirstRun(false);
             }
         });
@@ -252,7 +276,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
                             apply.setVisibility(View.VISIBLE);
                             apply.setClickable(false);
                             apply.setBackground(null);
-                            apply.setTextColor(getResources().getColor(R.color.button_color));
+                            apply.setTextColor(getResources().getColor(R.color.md_red_500));
                             apply.setText("melampau batas maksimal apply");
                         }
                     }

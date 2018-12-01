@@ -11,11 +11,11 @@ public class Magang implements Parcelable {
     private String salary;
     private String requirement;
     private String postedName;
+    private String companyEmail;
     private long applyQuota;
 
     public Magang() {
     }
-
 
     protected Magang(Parcel in) {
         key = in.readString();
@@ -26,6 +26,7 @@ public class Magang implements Parcelable {
         requirement = in.readString();
         postedName = in.readString();
         applyQuota = in.readLong();
+        companyEmail = in.readString();
     }
 
     public static final Creator<Magang> CREATOR = new Creator<Magang>() {
@@ -55,6 +56,7 @@ public class Magang implements Parcelable {
         parcel.writeString(requirement);
         parcel.writeString(postedName);
         parcel.writeLong(applyQuota);
+        parcel.writeString(companyEmail);
     }
 
     public String getKey() {
@@ -119,6 +121,14 @@ public class Magang implements Parcelable {
 
     public void setApplyQuota(long applyQuota) {
         this.applyQuota = applyQuota;
+    }
+
+    public String getCompanyEmail() {
+        return companyEmail;
+    }
+
+    public void setCompanyEmail(String companyEmail) {
+        this.companyEmail = companyEmail;
     }
 
     public static Creator<Magang> getCREATOR() {
