@@ -30,8 +30,8 @@ import id.developer.mahendra.pencarianmagangumb.AdminActivity;
 import id.developer.mahendra.pencarianmagangumb.EditProfilAdmin;
 import id.developer.mahendra.pencarianmagangumb.EditProfilUser;
 import id.developer.mahendra.pencarianmagangumb.R;
-import id.developer.mahendra.pencarianmagangumb.data.model.PhotoUsers;
-import id.developer.mahendra.pencarianmagangumb.data.model.Users;
+import id.developer.mahendra.pencarianmagangumb.model.PhotoUsers;
+import id.developer.mahendra.pencarianmagangumb.model.Users;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 public class ProfilAdmin extends Fragment {

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.developer.mahendra.pencarianmagangumb.R;
-import id.developer.mahendra.pencarianmagangumb.data.model.Magang;
+import id.developer.mahendra.pencarianmagangumb.model.Magang;
 
 public class MagangListAdapter extends RecyclerView.Adapter<MagangListAdapter.ViewHolder> {
     private Context context;

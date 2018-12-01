@@ -34,7 +34,7 @@ import id.developer.mahendra.pencarianmagangumb.MagangPost;
 import id.developer.mahendra.pencarianmagangumb.UserActivity;
 import id.developer.mahendra.pencarianmagangumb.R;
 import id.developer.mahendra.pencarianmagangumb.adapter.MagangListAdapter;
-import id.developer.mahendra.pencarianmagangumb.data.model.Magang;
+import id.developer.mahendra.pencarianmagangumb.model.Magang;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapter.DataListener{

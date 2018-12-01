@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,14 +21,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import id.developer.mahendra.pencarianmagangumb.AdminActivity;
-import id.developer.mahendra.pencarianmagangumb.MagangDetailAdminActivity;
 import id.developer.mahendra.pencarianmagangumb.NotificationDetailActivity;
 import id.developer.mahendra.pencarianmagangumb.R;
 import id.developer.mahendra.pencarianmagangumb.adapter.ApplyListAdapter;
-import id.developer.mahendra.pencarianmagangumb.data.model.ApplyNotification;
-import id.developer.mahendra.pencarianmagangumb.data.model.Magang;
-import id.developer.mahendra.pencarianmagangumb.data.model.Users;
-import id.developer.mahendra.pencarianmagangumb.data.model.UsersApply;
+import id.developer.mahendra.pencarianmagangumb.model.ApplyNotification;
+import id.developer.mahendra.pencarianmagangumb.model.Magang;
+import id.developer.mahendra.pencarianmagangumb.model.Users;
+import id.developer.mahendra.pencarianmagangumb.model.UsersApply;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 public class NotificationFragment extends Fragment implements ApplyListAdapter.DataListener{

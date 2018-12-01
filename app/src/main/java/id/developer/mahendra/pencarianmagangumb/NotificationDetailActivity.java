@@ -2,8 +2,6 @@ package id.developer.mahendra.pencarianmagangumb;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.nfc.Tag;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AlertDialog;
@@ -33,13 +31,12 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.cketti.mailto.EmailIntentBuilder;
-import id.developer.mahendra.pencarianmagangumb.data.model.ApplyNotification;
-import id.developer.mahendra.pencarianmagangumb.data.model.CvUsers;
-import id.developer.mahendra.pencarianmagangumb.data.model.Magang;
-import id.developer.mahendra.pencarianmagangumb.data.model.PhotoUsers;
-import id.developer.mahendra.pencarianmagangumb.data.model.Users;
-import id.developer.mahendra.pencarianmagangumb.data.model.UsersApply;
-import id.developer.mahendra.pencarianmagangumb.data.model.UsersApplyValidation;
+import id.developer.mahendra.pencarianmagangumb.model.CvUsers;
+import id.developer.mahendra.pencarianmagangumb.model.Magang;
+import id.developer.mahendra.pencarianmagangumb.model.PhotoUsers;
+import id.developer.mahendra.pencarianmagangumb.model.Users;
+import id.developer.mahendra.pencarianmagangumb.model.UsersApply;
+import id.developer.mahendra.pencarianmagangumb.model.UsersApplyValidation;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 public class NotificationDetailActivity extends AppCompatActivity {

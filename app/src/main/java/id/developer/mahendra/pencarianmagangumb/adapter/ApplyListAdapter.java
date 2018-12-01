@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.developer.mahendra.pencarianmagangumb.R;
-import id.developer.mahendra.pencarianmagangumb.data.model.Magang;
-import id.developer.mahendra.pencarianmagangumb.data.model.UsersApply;
+import id.developer.mahendra.pencarianmagangumb.model.UsersApply;
 
 
 public class ApplyListAdapter extends RecyclerView.Adapter<ApplyListAdapter.ViewHolder> {

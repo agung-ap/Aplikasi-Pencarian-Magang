@@ -1,4 +1,4 @@
-package id.developer.mahendra.pencarianmagangumb.data.model;
+package id.developer.mahendra.pencarianmagangumb.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,12 +7,12 @@ public class UsersApply implements Parcelable {
     private String magangPostId;
     private String userId;
     private String userName;
+    private String userNim;
     private String title;
     private String company;
 
     public UsersApply() {
     }
-
 
     protected UsersApply(Parcel in) {
         magangPostId = in.readString();
@@ -20,6 +20,7 @@ public class UsersApply implements Parcelable {
         userName = in.readString();
         title = in.readString();
         company = in.readString();
+        userNim = in.readString();
     }
 
     public static final Creator<UsersApply> CREATOR = new Creator<UsersApply>() {
@@ -46,6 +47,7 @@ public class UsersApply implements Parcelable {
         parcel.writeString(userName);
         parcel.writeString(title);
         parcel.writeString(company);
+        parcel.writeString(userNim);
     }
 
     public String getMagangPostId() {
@@ -86,6 +88,14 @@ public class UsersApply implements Parcelable {
 
     public void setCompany(String company) {
         this.company = company;
+    }
+
+    public String getUserNim() {
+        return userNim;
+    }
+
+    public void setUserNim(String userNim) {
+        this.userNim = userNim;
     }
 
     public static Creator<UsersApply> getCREATOR() {

@@ -1,4 +1,4 @@
-package id.developer.mahendra.pencarianmagangumb.data.model;
+package id.developer.mahendra.pencarianmagangumb.model;
 
 public class CvUsers {
     private String cvUrl;

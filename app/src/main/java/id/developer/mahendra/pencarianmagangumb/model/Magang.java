@@ -1,4 +1,4 @@
-package id.developer.mahendra.pencarianmagangumb.data.model;
+package id.developer.mahendra.pencarianmagangumb.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

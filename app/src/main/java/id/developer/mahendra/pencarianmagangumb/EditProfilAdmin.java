@@ -28,8 +28,8 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import id.developer.mahendra.pencarianmagangumb.data.model.Users;
-import id.developer.mahendra.pencarianmagangumb.data.model.PhotoUsers;
+import id.developer.mahendra.pencarianmagangumb.model.Users;
+import id.developer.mahendra.pencarianmagangumb.model.PhotoUsers;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 public class EditProfilAdmin extends AppCompatActivity {
