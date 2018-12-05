@@ -185,29 +185,36 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.MAGANG_POSTING);
 
-        Query queryData = databaseReference.orderByChild("title")
-                .startAt(query.toUpperCase())
-                .endAt(query.toLowerCase()+"\uf8ff");
 
-        queryData.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChildren()){
-                    magangArrayList.clear();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                        Magang magang = snapshot.getValue(Magang.class);
-                        magangArrayList.add(magang);
+            Query queryData = databaseReference
+                    .orderByChild("posting_data/title")
+                    .startAt(query.toUpperCase())
+                    .endAt(query.toLowerCase()+"\uf8ff");
+
+            queryData.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChildren()){
+                        magangArrayList.clear();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                            Magang magang = snapshot.child("posting_data").getValue(Magang.class);
+
+                            magang.setKey(snapshot.getKey());
+                            magangArrayList.add(magang);
+                        }
+
+                        magangListAdapter.setMagangData(magangArrayList);
+                        recyclerView.setAdapter(magangListAdapter);
                     }
-
-                    magangListAdapter.setMagangData(magangArrayList);
-                    recyclerView.setAdapter(magangListAdapter);
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+
+
+
     }
 }
