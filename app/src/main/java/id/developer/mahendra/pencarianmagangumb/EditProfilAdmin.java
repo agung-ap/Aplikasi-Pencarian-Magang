@@ -50,6 +50,7 @@ public class EditProfilAdmin extends AppCompatActivity {
     Button save;
 
     private FirebaseAuth auth;
+    private DatabaseReference databaseReference;
     private StorageReference storageReference;
     private String departmentSelected;
     private Uri imageFilePath;
@@ -114,17 +115,18 @@ public class EditProfilAdmin extends AppCompatActivity {
     }
 
     private void getUserData(FirebaseAuth auth){
-        final FirebaseUser currentUser = auth.getCurrentUser();
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
+        email.setVisibility(View.GONE);
+        password.setVisibility(View.GONE);
 
-        databaseReference.child(currentUser.getUid())
+        databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.USERS_TABLE);
+
+        databaseReference.child(auth.getUid()).child("users_data")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Users user = dataSnapshot.getValue(Users.class);
-
-                        //Picasso.get().load(user.getImageURl()).into(imagePreviewUser);
-
+                        //show user data from database
                         name.setText(user.getNama());
                         phone.setText(user.getTelp());
                         address.setText(user.getAlamat());
@@ -136,15 +138,14 @@ public class EditProfilAdmin extends AppCompatActivity {
                     }
                 });
 
-        final DatabaseReference databaseImageReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_PHOTO_TABLE);
-
-        databaseImageReference.child(currentUser.getUid())
+        databaseReference.child(auth.getUid())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        PhotoUsers user = dataSnapshot.getValue(PhotoUsers.class);
-                        Picasso.get().load(user.getImageUrl())
+                        String imageUrl = dataSnapshot.child("image_url").getValue(String.class);
+                        Picasso.get().load(imageUrl)
                                 .placeholder(R.drawable.background_image)
+                                .error(R.drawable.background_image)
                                 .into(imagePreviewAdmin);
 
                     }
@@ -154,17 +155,17 @@ public class EditProfilAdmin extends AppCompatActivity {
 
                     }
                 });
+
     }
 
     private void setUserData(FirebaseAuth auth, Users user){
-        final FirebaseUser currentUser = auth.getCurrentUser();
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
-        databaseReference.child(currentUser.getUid()).setValue(user)
+        databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
+        databaseReference.child(auth.getUid()).child("users_data").setValue(user)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
-                            setEmailPassword(currentUser, email, password);
+
                             setResult(REQUEST_ADD);
                         }else {
 

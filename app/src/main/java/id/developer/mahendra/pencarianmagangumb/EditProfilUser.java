@@ -162,7 +162,11 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
     }
 
     private void getUserData(FirebaseAuth auth){
+        email.setVisibility(View.GONE);
+        password.setVisibility(View.GONE);
+
         databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
+
         databaseReference.child(auth.getUid()).child("users_data")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
