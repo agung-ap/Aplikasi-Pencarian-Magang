@@ -2,6 +2,7 @@ package id.developer.mahendra.pencarianmagangumb;
 
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -90,7 +91,6 @@ public class MagangDetailUserActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 showDialogApply(view);
-
             }
         });
     }
@@ -126,7 +126,6 @@ public class MagangDetailUserActivity extends AppCompatActivity {
                 long count = (long) dataSnapshot.child("applyCount").getValue();
                 //increment apply count in post magang database
                 counterRef.child("applyCount").setValue(++count);
-
             }
 
             @Override
@@ -144,8 +143,8 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         String body = "Dengan ini saya :\n" +
                 "\n" +
                 "Nama : " + username + "\n" +
-                "Alamat :" + address + "\n" +
-                "No Telpon :" + phone + "\n" +
+                "Alamat : " + address + "\n" +
+                "No Telpon : " + phone + "\n" +
                 "\n" +
                 "Mahasiswa Universitas Mercu Buana ingin mendaftar Kerja Praktek di perusahaan anda.\n" +
                 "\n" +
@@ -254,10 +253,16 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                setApply(auth, data());
-                sendEmail();
-                Toast.makeText(MagangDetailUserActivity.this, "Apply Berhasil", Toast.LENGTH_SHORT).show();
-
+                if (address.equals("none") || phone.equals("none") ||
+                        cvUrl.equals("none")){
+                    Snackbar.make(view, "Silahkan isi Form alamat, no.telp " +
+                            "serta upload cv kamu di menu profil ", Snackbar.LENGTH_LONG)
+                            .setAction("Mengerti", null).show();
+                }else {
+                    setApply(auth, data());
+                    sendEmail();
+                    Toast.makeText(MagangDetailUserActivity.this, "Apply Berhasil", Toast.LENGTH_SHORT).show();
+                }
                 //preference.setFirstRun(false);
             }
         });

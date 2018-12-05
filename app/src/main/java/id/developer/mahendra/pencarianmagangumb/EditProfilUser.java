@@ -290,7 +290,7 @@ public class EditProfilUser extends AppCompatActivity implements AdapterView.OnI
             startActivityForResult(intent, ImageProfilPreview.UPLOADED);
         }
 
-        if (requestCode == ImageProfilPreview.UPLOADED && resultCode == RESULT_OK){
+        if (requestCode == 21 && resultCode == RESULT_OK){
             Toast.makeText(EditProfilUser.this, "berhasil diupload",
                     Toast.LENGTH_SHORT).show();
         }
