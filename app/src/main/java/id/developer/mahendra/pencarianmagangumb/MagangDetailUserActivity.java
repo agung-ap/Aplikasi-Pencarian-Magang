@@ -1,7 +1,6 @@
 package id.developer.mahendra.pencarianmagangumb;
 
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +15,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,10 +22,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.EventListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.cketti.mailto.EmailIntentBuilder;
 import id.developer.mahendra.pencarianmagangumb.model.Magang;
 import id.developer.mahendra.pencarianmagangumb.model.Users;
 import id.developer.mahendra.pencarianmagangumb.model.UsersApply;
@@ -53,7 +51,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
     ProgressBar isApplyValidation;
 
     private ArrayList<Magang> magangData;
-    private String username, usernim;
+    private String username, usernim, address, phone, cvUrl;
     private FirebaseAuth auth;
     private DatabaseReference databaseReference;
 
@@ -68,7 +66,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //init firebase auth
         auth = FirebaseAuth.getInstance();
-        getUserName(auth);
+        getUserData(auth);
         //preference = new StorePreference(this);
         if (savedInstanceState == null){
             Bundle getBundle = getIntent().getExtras();
@@ -128,7 +126,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
                 long count = (long) dataSnapshot.child("applyCount").getValue();
                 //increment apply count in post magang database
                 counterRef.child("applyCount").setValue(++count);
-                finish();
+
             }
 
             @Override
@@ -137,6 +135,28 @@ public class MagangDetailUserActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void sendEmail(){
+        //email subject
+        String subject = "(" + magangData.get(0).getTitle() + ") Mahasiswa Mercu Buana ";
+        //email body
+        String body = "Dengan ini saya :\n" +
+                "\n" +
+                "Nama : " + username + "\n" +
+                "Alamat :" + address + "\n" +
+                "No Telpon :" + phone + "\n" +
+                "\n" +
+                "Mahasiswa Universitas Mercu Buana ingin mendaftar Kerja Praktek di perusahaan anda.\n" +
+                "\n" +
+                "Berikut saya sertakan CV saya\n" + cvUrl + "\n";
+        //send email via intent
+        EmailIntentBuilder.from(getApplicationContext())
+                .to(magangData.get(0).getCompanyEmail())
+                .cc(getString(R.string.admin_email))
+                .subject(subject)
+                .body(body)
+                .start();
     }
 
     private void getApplyCount(){
@@ -235,6 +255,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 setApply(auth, data());
+                sendEmail();
                 Toast.makeText(MagangDetailUserActivity.this, "Apply Berhasil", Toast.LENGTH_SHORT).show();
 
                 //preference.setFirstRun(false);
@@ -307,10 +328,10 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         }
     }
 
-    private void getUserName(FirebaseAuth auth){
+    private void getUserData(FirebaseAuth auth){
         databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.USERS_TABLE);
-
+        //get users data
         databaseReference.child(auth.getUid()).child("users_data")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
@@ -318,6 +339,8 @@ public class MagangDetailUserActivity extends AppCompatActivity {
                         Users users = dataSnapshot.getValue(Users.class);
                         username = users.getNama();
                         usernim = users.getNim();
+                        address = users.getAlamat();
+                        phone = users.getTelp();
                     }
 
                     @Override
@@ -325,6 +348,20 @@ public class MagangDetailUserActivity extends AppCompatActivity {
 
                     }
                 });
+        //get cv url data
+        databaseReference.child(auth.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String url = dataSnapshot.child("cv_url").getValue(String.class);
+
+                cvUrl = url;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
