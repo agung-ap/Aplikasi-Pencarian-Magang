@@ -20,4 +20,23 @@
     <string name="isApply">Anda sudah pernah apply magang ini silahkan tunggu email balasan dari admin untuk keputusan lebih lanjut</string>
     <string name="applyCount">Lowongan ini sudah full , silahkan tunggu dalam beberapa minggu</string>
     <string name="admin_email">mahendrabudiarto96@gmail.com</string>
+
+    <string-array name="question">
+        <item>Aplikasi apa ini?</item>
+        <item>Apa manfaat aplikasi ini?</item>
+        <item>Apakah saya bisa mencari tempat kerja praktek?</item>
+        <item>Kenapa saya tidak bisa apply?</item>
+        <item>Rules?</item>
+    </string-array>
+
+    <string-array name="answer">
+        <item>Aplikasi ini adalah aplikasi pencarian kerja praktek untuk mahasiswa universitas mercubuana untuk memenuhi syarat kelulusan.</item>
+        <item>Manfaat aplikasi ini adalah untuk memudahkan mahasiswa mendapatkan informasi mengenai lowongan tempat kerja praktek sesuai yang diinginkan.</item>
+        <item>Bisa, anda bisa menggunakan faisilitas pencarian sesuai job yang diinginkan.</item>
+        <item>Anda diharuskan mengisi profile terlebih dahulu dan mengupload CV untuk mengirim lowongan ke perushaan.</item>
+        <item>1. Dalam aplikasi ini user hanya bisa mengirim lowongan sebanyak 3 kali dalam waktu 3 minggu\n\n
+            2. lowongan di batasi oleh admin dan hanya bisa di apply dengan batasan Quota, jika perusahaan masih membutuhkan peserta kerja praktek lowongan akan di buka lagi oleh admin
+        </item>
+    </string-array>
+
 </resources>
