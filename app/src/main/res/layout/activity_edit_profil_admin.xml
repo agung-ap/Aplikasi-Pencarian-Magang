@@ -57,6 +57,7 @@
             app:layout_constraintRight_toRightOf="@+id/nama"/>
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -77,6 +78,7 @@
             app:layout_constraintRight_toRightOf="@+id/email"/>
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -33,13 +33,13 @@ public class HelpFragment extends Fragment {
         ((UserActivity)getActivity()).getSupportActionBar().setTitle("Help");
         //allow fragment to use menu in action bar
         setHasOptionsMenu(true);
-        //init recyclerview
+        //initialization recyclerview
         helpList = (RecyclerView)view.findViewById(R.id.help_list);
         helpList.setLayoutManager(new LinearLayoutManager(getContext()));
         helpList.setHasFixedSize(true);
-        //init array list
+        //initialization array list
         helpArrayList = new ArrayList<>();
-        //init adapter
+        //initialization adapter
         helpAdapterter = new HelpAdapter(getContext());
         //tampilkan help list ke recyclerView
         data();

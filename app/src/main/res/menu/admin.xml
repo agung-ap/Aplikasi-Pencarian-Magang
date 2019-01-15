@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/search_magang"
+        android:title="Search"
+        android:icon="@drawable/icon_search"
+        app:showAsAction="collapseActionView|always"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+
+    <item
         android:id="@+id/add_magang_info"
         android:title="tambah magang"
         android:icon="@drawable/icon_add"

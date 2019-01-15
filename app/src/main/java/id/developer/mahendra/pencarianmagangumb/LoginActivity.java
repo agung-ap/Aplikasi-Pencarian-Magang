@@ -67,11 +67,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
+    //this method is for handle login activity
     private void handleLogin() {
         final String inputEmail = email.getText().toString().trim();
         final String inputPassword = password.getText().toString().trim();
-        //check if email or password is null or lack
+        //check if email or password is null
         if (TextUtils.isEmpty(inputEmail)) {
             email.setError("Email tidak boleh kosong");
             return;
@@ -94,14 +94,16 @@ public class LoginActivity extends AppCompatActivity {
                         if (!task.isSuccessful()) {
                             // there was an error
                             progressDialog.dismiss();
+                            //if password is lack of 6 characters
                             if (inputPassword.length() < 6) {
                                 password.setError("password kurang dari 6 karakter");
                             } else {
                                 Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_LONG).show();
                             }
                         } else {
+                            //get user id after login success
                             final String uid = task.getResult().getUser().getUid();
-                            final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                            databaseReference = FirebaseDatabase.getInstance().getReference();
                             databaseReference.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

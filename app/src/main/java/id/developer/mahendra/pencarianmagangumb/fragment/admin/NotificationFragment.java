@@ -100,7 +100,7 @@ public class NotificationFragment extends Fragment implements ApplyListAdapter.D
             e.printStackTrace();
         }
     }
-
+    //ger users apply as notification in admin
     private void getUsersApply(){
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.USERS_APPLY_TABLE);
@@ -189,7 +189,7 @@ public class NotificationFragment extends Fragment implements ApplyListAdapter.D
         //intent.putExtra("user status", );
         startActivity(intent);
     }
-
+    //download notifikasi menjadi pdf
     private void createPdfWrapper() throws FileNotFoundException,DocumentException {
 
         int hasWriteStoragePermission = ActivityCompat.checkSelfPermission(getActivity(),

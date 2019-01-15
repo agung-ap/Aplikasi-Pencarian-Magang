@@ -35,7 +35,7 @@ public class MagangListAdapter extends RecyclerView.Adapter<MagangListAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        viewHolder.titleList.setText(listMagang.get(i).getTitle());
+        viewHolder.titleList.setText(listMagang.get(i).getTitle().toUpperCase());
         viewHolder.companyNameList.setText(listMagang.get(i).getCompanyName());
         viewHolder.cityList.setText(listMagang.get(i).getCity());
         viewHolder.salaryList.setText(listMagang.get(i).getSalary());

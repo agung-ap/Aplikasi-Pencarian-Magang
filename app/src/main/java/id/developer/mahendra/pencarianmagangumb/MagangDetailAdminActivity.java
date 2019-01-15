@@ -78,7 +78,7 @@ public class MagangDetailAdminActivity extends AppCompatActivity {
             }
         });
     }
-    //set apply count = 0
+    //set apply count = 0 for opening apply if quota full.
     private void setApplyCount(long i) {
         databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.MAGANG_POSTING);

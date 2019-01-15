@@ -85,7 +85,7 @@ public class ProfilAdminFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
-
+    //show admin profile
     private void getAdminProfil(FirebaseAuth auth){
         databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.USERS_TABLE);

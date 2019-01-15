@@ -197,6 +197,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     private void showMagangDetail() {
         titleDetail.setText(magangData.get(0).getTitle());
         companyNameDetail.setText(magangData.get(0).getCompanyName());
@@ -205,7 +206,6 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         applyQuotaDetail.setText("jumlah pendaftar saat ini : " + magangData.get(0).getApplyQuota());
         requirementDetail.setText(magangData.get(0).getRequirement());
     }
-
     private UsersApply data(){
         UsersApply apply = new UsersApply();
         apply.setMagangPostId(magangData.get(0).getKey());
@@ -255,12 +255,12 @@ public class MagangDetailUserActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (address.equals("none") || phone.equals("none") ||
                         cvUrl.equals("none")){
-                    Snackbar.make(view, "Silahkan isi Form alamat, no.telp " +
+                    Snackbar.make(view, "Silahkan isi Form alamat, no.telp\n" +
                             "serta upload cv kamu di menu profil ", Snackbar.LENGTH_LONG)
                             .setAction("Mengerti", null).show();
                 }else {
-                    setApply(auth, data());
                     sendEmail();
+                    setApply(auth, data());
                     Toast.makeText(MagangDetailUserActivity.this, "Apply Berhasil", Toast.LENGTH_SHORT).show();
                 }
                 //preference.setFirstRun(false);

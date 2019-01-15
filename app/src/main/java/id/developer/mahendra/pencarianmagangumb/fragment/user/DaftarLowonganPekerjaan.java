@@ -71,7 +71,7 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
 
         return view;
     }
-
+    //search function with firebase api
     private void searchMagangPost(Menu menu){
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search_magang));
         searchView.setQueryHint("Yuk Cari Magang");
@@ -131,7 +131,7 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
         }
         return super.onOptionsItemSelected(item);
     }
-
+    //get magang posting data function
     private void getData(){
         databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.MAGANG_POSTING);
@@ -185,11 +185,10 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
                 .getReference(Constant.MAGANG_POSTING);
 
-
             Query queryData = databaseReference
                     .orderByChild("posting_data/title")
                     .startAt(query.toUpperCase())
-                    .endAt(query.toLowerCase()+"\uf8ff");
+                    .endAt(query+"\uf8ff");
 
             queryData.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -213,8 +212,5 @@ public class DaftarLowonganPekerjaan extends Fragment implements MagangListAdapt
 
                 }
             });
-
-
-
     }
 }

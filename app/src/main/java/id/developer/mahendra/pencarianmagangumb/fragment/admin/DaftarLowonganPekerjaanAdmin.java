@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -68,6 +71,75 @@ public class DaftarLowonganPekerjaanAdmin extends Fragment implements MagangList
 
         return view;
     }
+    //pencarian magang berdasarkan title / judul
+    private void searchMagangByTitle(final String query){
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.MAGANG_POSTING);
+
+        Query queryData = databaseReference
+                .orderByChild("posting_data/title")
+                .startAt(query.toUpperCase())
+                .endAt(query+"\uf8ff");
+
+        queryData.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()){
+                    magangArrayList.clear();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                        Magang magang = snapshot.child("posting_data").getValue(Magang.class);
+
+                        magang.setKey(snapshot.getKey());
+                        magangArrayList.add(magang);
+                    }
+
+                    magangListAdapter.setMagangData(magangArrayList);
+                    recyclerView.setAdapter(magangListAdapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    //search function with firebase api
+    private void searchMagangPost(Menu menu){
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search_magang));
+        searchView.setQueryHint("Yuk Cari Magang");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchMagangByTitle(query);
+                Toast.makeText(getActivity(), query, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        MenuItem menuItem = menu.findItem(R.id.search_magang);
+        menuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                magangArrayList.clear();
+                getData();
+                //add Adapter to RecyclerView
+                recyclerView.setAdapter(magangListAdapter);
+                return true;
+            }
+        });
+    }
 
     private void getData(){
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
@@ -114,6 +186,7 @@ public class DaftarLowonganPekerjaanAdmin extends Fragment implements MagangList
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.admin, menu);
 
+        searchMagangPost(menu);
     }
 
     @Override

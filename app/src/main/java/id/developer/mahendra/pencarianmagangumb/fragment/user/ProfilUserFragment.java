@@ -134,7 +134,6 @@ public class ProfilUserFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-
     private void showUserProfil(FirebaseAuth auth){
         databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
         databaseReference.child(auth.getUid())
@@ -191,14 +190,12 @@ public class ProfilUserFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == EditProfilUser.REQUEST_ADD && resultCode == RESULT_OK)
+        if(resultCode == 20)
         {
             Toast.makeText(getActivity(), "berhasil di simpan",
                     Toast.LENGTH_SHORT).show();
-
-        } else if (requestCode == EditProfilUser.REQUEST_BACK ) {
-
         }
+
         if (requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK
                 && data != null && data.getData() != null){
 

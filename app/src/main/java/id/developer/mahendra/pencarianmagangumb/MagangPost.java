@@ -121,10 +121,12 @@ public class MagangPost extends AppCompatActivity {
     }
     //set magang data to database
     private void setMagangData(Magang posting){
+
         if (!isEdit) {
+            //posting data baru
             databaseReference = FirebaseDatabase.getInstance()
                     .getReference(Constant.MAGANG_POSTING);
-            //generate uniq id
+            //generate unique id
             final String key = databaseReference.push().getKey();
             //set magang posting to database
             databaseReference.child(key).child("posting_data").setValue(posting)
@@ -143,6 +145,7 @@ public class MagangPost extends AppCompatActivity {
                         }
                     });
         }else {
+            //edit posting
             databaseReference = FirebaseDatabase.getInstance()
                     .getReference(Constant.MAGANG_POSTING);
             databaseReference.child(magangData.get(0).getKey())

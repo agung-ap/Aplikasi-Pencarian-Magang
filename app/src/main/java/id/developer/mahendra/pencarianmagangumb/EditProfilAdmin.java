@@ -84,7 +84,6 @@ public class EditProfilAdmin extends AppCompatActivity {
             public void onClick(View view) {
                 setUserData(auth, data());
                 //uploadImage(imageFilePath);
-
             }
         });
     }
@@ -157,7 +156,7 @@ public class EditProfilAdmin extends AppCompatActivity {
                 });
 
     }
-
+    //save admin profile
     private void setUserData(FirebaseAuth auth, Users user){
         databaseReference = FirebaseDatabase.getInstance().getReference(Constant.USERS_TABLE);
         databaseReference.child(auth.getUid()).child("users_data").setValue(user)
