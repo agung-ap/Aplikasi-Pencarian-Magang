@@ -12,6 +12,7 @@ public class Magang implements Parcelable {
     private String requirement;
     private String postedName;
     private String companyEmail;
+    private String date;
     private long applyQuota;
 
     public Magang() {
@@ -25,8 +26,9 @@ public class Magang implements Parcelable {
         salary = in.readString();
         requirement = in.readString();
         postedName = in.readString();
-        applyQuota = in.readLong();
         companyEmail = in.readString();
+        date = in.readString();
+        applyQuota = in.readLong();
     }
 
     public static final Creator<Magang> CREATOR = new Creator<Magang>() {
@@ -40,24 +42,6 @@ public class Magang implements Parcelable {
             return new Magang[size];
         }
     };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(key);
-        parcel.writeString(title);
-        parcel.writeString(companyName);
-        parcel.writeString(city);
-        parcel.writeString(salary);
-        parcel.writeString(requirement);
-        parcel.writeString(postedName);
-        parcel.writeLong(applyQuota);
-        parcel.writeString(companyEmail);
-    }
 
     public String getKey() {
         return key;
@@ -115,14 +99,6 @@ public class Magang implements Parcelable {
         this.postedName = postedName;
     }
 
-    public long getApplyQuota() {
-        return applyQuota;
-    }
-
-    public void setApplyQuota(long applyQuota) {
-        this.applyQuota = applyQuota;
-    }
-
     public String getCompanyEmail() {
         return companyEmail;
     }
@@ -131,7 +107,38 @@ public class Magang implements Parcelable {
         this.companyEmail = companyEmail;
     }
 
-    public static Creator<Magang> getCREATOR() {
-        return CREATOR;
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public long getApplyQuota() {
+        return applyQuota;
+    }
+
+    public void setApplyQuota(long applyQuota) {
+        this.applyQuota = applyQuota;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(key);
+        parcel.writeString(title);
+        parcel.writeString(companyName);
+        parcel.writeString(city);
+        parcel.writeString(salary);
+        parcel.writeString(requirement);
+        parcel.writeString(postedName);
+        parcel.writeString(companyEmail);
+        parcel.writeString(date);
+        parcel.writeLong(applyQuota);
     }
 }

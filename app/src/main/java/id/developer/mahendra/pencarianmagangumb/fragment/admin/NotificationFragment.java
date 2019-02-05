@@ -35,6 +35,9 @@ import com.itextpdf.text.DocumentException;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 import id.developer.mahendra.pencarianmagangumb.AdminActivity;
 import id.developer.mahendra.pencarianmagangumb.NotificationDetailActivity;
@@ -198,6 +201,15 @@ public class NotificationFragment extends Fragment implements ApplyListAdapter.D
                         Log.i(TAG, "user id = " + apply.getUserId());
 
                         applyList.add(apply);
+
+                        Comparator<UsersApply> comparator = new Comparator<UsersApply>() {
+                            @Override
+                            public int compare(UsersApply usersApply, UsersApply mUsersApply) {
+                                return usersApply.getDate().compareTo(mUsersApply.getDate());
+                            }
+                        };
+                        // Reverse order by date
+                        Collections.sort(applyList, Collections.reverseOrder(comparator));
                         applyListAdapter.setNotificationData(applyList);
                     }
                 }

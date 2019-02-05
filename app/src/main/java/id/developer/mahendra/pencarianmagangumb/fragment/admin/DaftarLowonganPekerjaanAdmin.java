@@ -27,6 +27,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import id.developer.mahendra.pencarianmagangumb.AdminActivity;
 import id.developer.mahendra.pencarianmagangumb.EditProfilUser;
@@ -35,6 +37,7 @@ import id.developer.mahendra.pencarianmagangumb.MagangPost;
 import id.developer.mahendra.pencarianmagangumb.R;
 import id.developer.mahendra.pencarianmagangumb.adapter.MagangListAdapter;
 import id.developer.mahendra.pencarianmagangumb.model.Magang;
+import id.developer.mahendra.pencarianmagangumb.model.UsersApply;
 import id.developer.mahendra.pencarianmagangumb.util.Constant;
 
 
@@ -158,7 +161,16 @@ public class DaftarLowonganPekerjaanAdmin extends Fragment implements MagangList
                                     .getValue(Magang.class);
 
                             posting.setKey(snapshot.getKey());
+
                             magangArrayList.add(posting);
+                            Comparator<Magang> comparator = new Comparator<Magang>() {
+                                @Override
+                                public int compare(Magang magang, Magang mMagang) {
+                                    return magang.getDate().compareTo(mMagang.getDate());
+                                }
+                            };
+                            // Reverse order by date
+                            Collections.sort(magangArrayList, Collections.reverseOrder(comparator));
 
                         }
 

@@ -18,7 +18,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -98,6 +101,9 @@ public class MagangPost extends AppCompatActivity {
     }
 
     private Magang data(){
+        DateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy, HH:mm");
+        String date = df.format(Calendar.getInstance().getTime());
+
         String inputTitle = title.getText().toString().trim();
         String inputCompanyName = companyName.getText().toString().trim();
         String inputCompanyEmail = companyEmail.getText().toString().trim();
@@ -116,6 +122,7 @@ public class MagangPost extends AppCompatActivity {
         posting.setApplyQuota(Long.parseLong(inputApplyQuota));
         posting.setPostedName(userName);
         posting.setCompanyEmail(inputCompanyEmail);
+        posting.setDate(date);
 
         return posting;
     }
