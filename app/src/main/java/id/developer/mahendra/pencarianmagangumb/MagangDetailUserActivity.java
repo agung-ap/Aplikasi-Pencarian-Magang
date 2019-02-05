@@ -22,7 +22,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -207,6 +210,9 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         requirementDetail.setText(magangData.get(0).getRequirement());
     }
     private UsersApply data(){
+        DateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy, HH:mm");
+        String date = df.format(Calendar.getInstance().getTime());
+
         UsersApply apply = new UsersApply();
         apply.setMagangPostId(magangData.get(0).getKey());
         apply.setUserId(auth.getUid());
@@ -214,6 +220,7 @@ public class MagangDetailUserActivity extends AppCompatActivity {
         apply.setUserNim(usernim);
         apply.setTitle(magangData.get(0).getTitle());
         apply.setCompany(magangData.get(0).getCompanyName());
+        apply.setDate(date);
         return apply;
     }
     //set apply to database

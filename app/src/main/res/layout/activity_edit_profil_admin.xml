@@ -69,6 +69,7 @@
             app:layout_constraintRight_toRightOf="@+id/nama_admin"/>
 
         <EditText
+            android:visibility="gone"
             android:id="@+id/email_admin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -90,6 +91,7 @@
             app:layout_constraintRight_toRightOf="@+id/email_admin"/>
 
         <EditText
+            android:visibility="gone"
             android:id="@+id/password_admin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -9,16 +9,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -27,10 +29,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.itextpdf.text.DocumentException;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
@@ -91,6 +93,87 @@ public class NotificationFragment extends Fragment implements ApplyListAdapter.D
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.notification, menu);
+
+        searchNotifikasiByNim(menu);
+    }
+
+    private void searchNotifikasiByNim(Menu menu) {
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search_notification));
+        searchView.setQueryHint("cari notifikasi berdasarkan NIM");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchUserByNim(query);
+                Toast.makeText(getActivity(), query, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        MenuItem menuItem = menu.findItem(R.id.search_notification);
+        menuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                applyList.clear();
+                getUsersApply();
+                //add Adapter to RecyclerView
+                recyclerView.setAdapter(applyListAdapter);
+                return true;
+            }
+        });
+    }
+
+    private void searchUserByNim(String query) {
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.USERS_APPLY_TABLE);
+
+        Query queryData = databaseReference
+                .orderByChild("userNim")
+                .startAt(query)
+                .endAt(query+"\uf8ff");
+
+        queryData.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()){
+                    applyList.clear();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                        UsersApply apply = snapshot.getValue(UsersApply.class);
+
+                        Log.i(TAG, "magang post id = " + apply.getMagangPostId());
+                        Log.i(TAG, "user id = " + apply.getUserId());
+
+                        applyList.add(apply);
+                        applyListAdapter.setNotificationData(applyList);
+                    }
+
+                    applyListAdapter.setNotificationData(applyList);
+                    recyclerView.setAdapter(applyListAdapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    //fungsi untuk download notifikasi jadi report pdf
     private void downloadReport() {
         try {
             createPdfWrapper();

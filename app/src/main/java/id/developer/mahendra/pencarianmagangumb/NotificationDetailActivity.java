@@ -77,8 +77,8 @@ public class NotificationDetailActivity extends AppCompatActivity {
     @BindView(R.id.user_cv_notification)
     Button userCv;
 
-    @BindView(R.id.accept)
-    Button accept;
+    @BindView(R.id.reset_apply)
+    Button resetApply;
     @BindView(R.id.decline)
     Button decline;
 
@@ -108,13 +108,12 @@ public class NotificationDetailActivity extends AppCompatActivity {
         getUserCv(userId);
         getCompanyData(magangPostId);
 
-        accept.setOnClickListener(new View.OnClickListener() {
+        resetApply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String acceptance = "apakah anda akan menerima kandidat ini ? " +
-                        "jika iya beritahu lewat email";
+                String resetUserMessage = "apakah anda akan mereset kuota apply pengguna ini ?";
                 Log.i(TAG, "email = " + emailUser);
-                showDialog(acceptance,emailUser);
+                showDialog(resetUserMessage,emailUser);
             }
         });
 
@@ -248,16 +247,15 @@ public class NotificationDetailActivity extends AppCompatActivity {
         builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                EmailIntentBuilder.from(NotificationDetailActivity.this)
+                /*EmailIntentBuilder.from(NotificationDetailActivity.this)
                         .to(email)
                         .cc("mahendrabudiarto96@gmail.com")
                         .subject("Acceptance email")
                         .body("Write your text here")
-                        .start();
+                        .start();*/
 
-                UsersApplyValidation validation = new UsersApplyValidation();
                 //validation.setApply(false);
-                setUsersApplyValidation(validation);
+                setUsersApplyValidation();
             }
 
         });
@@ -271,23 +269,19 @@ public class NotificationDetailActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void setUsersApplyValidation(UsersApplyValidation usersApplyValidation){
-        final DatabaseReference databaseImageReference = FirebaseDatabase.getInstance()
-                .getReference(Constant.USERS_APPLY_VALIDATION_TABLE);
+    private void setUsersApplyValidation(){
+        databaseReference = FirebaseDatabase.getInstance()
+                .getReference(Constant.USERS_TABLE)
+                .child(userId)
+                .child("magang_apply");
 
-            databaseImageReference.child(userId)
-                    .child(magangPostId)
-                    .setValue(usersApplyValidation).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()){
-                        Log.i(TAG, "create apply validation table is success");
-                    }else {
-                        Log.e(TAG, "create apply validation table is failed : " + task.getException());
-                    }
-                }
-
-            });
+        databaseReference.setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(NotificationDetailActivity.this, "User Apply berhasi di reset", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
     }
 }
 

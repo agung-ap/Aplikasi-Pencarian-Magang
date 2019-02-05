@@ -39,6 +39,7 @@ public class ApplyListAdapter extends RecyclerView.Adapter<ApplyListAdapter.View
         holder.titleJob.setText("Jobs : " + usersApplyList.get(i).getTitle());
         holder.companyJob.setText("Company : " + usersApplyList.get(i).getCompany());
         holder.userNim.setText("Nim : " + usersApplyList.get(i).getUserNim());
+        holder.dateAndTime.setText(usersApplyList.get(i).getDate());
     }
 
     @Override
@@ -62,6 +63,8 @@ public class ApplyListAdapter extends RecyclerView.Adapter<ApplyListAdapter.View
         TextView titleJob;
         @BindView(R.id.company_name_apply)
         TextView companyJob;
+        @BindView(R.id.date_and_time_apply_apply)
+        TextView dateAndTime;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

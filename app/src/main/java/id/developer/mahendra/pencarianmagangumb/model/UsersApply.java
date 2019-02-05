@@ -10,6 +10,7 @@ public class UsersApply implements Parcelable {
     private String userNim;
     private String title;
     private String company;
+    private String date;
 
     public UsersApply() {
     }
@@ -18,9 +19,10 @@ public class UsersApply implements Parcelable {
         magangPostId = in.readString();
         userId = in.readString();
         userName = in.readString();
+        userNim = in.readString();
         title = in.readString();
         company = in.readString();
-        userNim = in.readString();
+        date = in.readString();
     }
 
     public static final Creator<UsersApply> CREATOR = new Creator<UsersApply>() {
@@ -34,21 +36,6 @@ public class UsersApply implements Parcelable {
             return new UsersApply[size];
         }
     };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(magangPostId);
-        parcel.writeString(userId);
-        parcel.writeString(userName);
-        parcel.writeString(title);
-        parcel.writeString(company);
-        parcel.writeString(userNim);
-    }
 
     public String getMagangPostId() {
         return magangPostId;
@@ -74,6 +61,14 @@ public class UsersApply implements Parcelable {
         this.userName = userName;
     }
 
+    public String getUserNim() {
+        return userNim;
+    }
+
+    public void setUserNim(String userNim) {
+        this.userNim = userNim;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -90,15 +85,28 @@ public class UsersApply implements Parcelable {
         this.company = company;
     }
 
-    public String getUserNim() {
-        return userNim;
+    public String getDate() {
+        return date;
     }
 
-    public void setUserNim(String userNim) {
-        this.userNim = userNim;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public static Creator<UsersApply> getCREATOR() {
-        return CREATOR;
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(magangPostId);
+        parcel.writeString(userId);
+        parcel.writeString(userName);
+        parcel.writeString(userNim);
+        parcel.writeString(title);
+        parcel.writeString(company);
+        parcel.writeString(date);
     }
 }

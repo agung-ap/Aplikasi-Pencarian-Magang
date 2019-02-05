@@ -62,7 +62,8 @@ public class PdfPrint {
                     "Nama\t\t : \n" +
                             "Nim\t\t : \n" +
                             "Job\t\t : \n" +
-                            "Company\t\t : " ));
+                            "Company\t\t : \n" +
+                            "Date & Time\t\t : " ));
             table.addCell(cell);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             //row 1 column 2
@@ -70,7 +71,8 @@ public class PdfPrint {
                     getApplyData.get(i).getUserName()+ "\n" +
                             getApplyData.get(i).getUserNim()+ "\n" +
                             getApplyData.get(i).getTitle()+ "\n" +
-                            getApplyData.get(i).getCompany()+ "\n"));
+                            getApplyData.get(i).getCompany()+ "\n" +
+                            getApplyData.get(i).getDate()+ "\n"));
             table.addCell(cell);
 
         }

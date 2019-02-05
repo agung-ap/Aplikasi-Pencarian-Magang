@@ -53,6 +53,17 @@
         style="@style/TextAppearance.AppCompat.Display1"
         android:text="Company : Agung Developer Grup"/>
 
+    <TextView
+        android:id="@+id/date_and_time_apply_apply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:textSize="16sp"
+        style="@style/TextAppearance.AppCompat.Display1"
+        android:text="Rabu, 6 Feb 2019 00:14"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
